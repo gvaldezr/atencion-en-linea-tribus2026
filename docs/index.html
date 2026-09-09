@@ -742,6 +742,21 @@ body:hover .nav-arrow { opacity: 1; }
   outline: 2px solid var(--accent);
   outline-offset: 3px;
 }
+
+
+/* ═══ Safety net: ensure active slide content is always visible ═══ */
+.slide.active .slide-inner { opacity: 1; visibility: visible; }
+.slide.active .reveal { 
+  opacity: 1 !important; 
+  transform: translateY(0) !important; 
+  visibility: visible !important;
+}
+.slide.active {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateX(0) !important;
+}
+
 </style>
 </head>
 <body>
@@ -1083,7 +1098,7 @@ body:hover .nav-arrow { opacity: 1; }
   </div>
 
   <!-- ============ SLIDE 15 — ACTO V: RECONOCIMIENTO ============ -->
-  <div class="slide" data-act="5" style="position:relative;">
+  <div class="slide slide--glow-center" data-act="5" style="position:relative;">
     <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%, rgba(255,89,0,0.05) 0%, transparent 60%);pointer-events:none;"></div>
     <div class="slide-inner text-center">
       <div class="act-label act-label--center reveal">Acto V</div>
@@ -1102,7 +1117,7 @@ body:hover .nav-arrow { opacity: 1; }
   </div>
 
   <!-- ============ SLIDE 16 — EQUIPOS QUE ELIGIERON ============ -->
-  <div class="slide" data-act="5" style="position:relative;">
+  <div class="slide slide--glow-center" data-act="5" style="position:relative;">
     <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%, rgba(255,89,0,0.05) 0%, transparent 60%);pointer-events:none;"></div>
     <div class="slide-inner text-center">
       <p class="body-lg reveal" style="max-width:650px; margin: 0 auto var(--space-2xl);">
@@ -1116,7 +1131,7 @@ body:hover .nav-arrow { opacity: 1; }
   </div>
 
   <!-- ============ SLIDE 17 — LA FRASE ============ -->
-  <div class="slide" data-act="5" style="position:relative;">
+  <div class="slide slide--glow-center" data-act="5" style="position:relative;">
     <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%, rgba(255,89,0,0.05) 0%, transparent 60%);pointer-events:none;"></div>
     <div class="slide-inner text-center">
       <div class="invisible-line reveal"></div>
@@ -1270,6 +1285,14 @@ body:hover .nav-arrow { opacity: 1; }
 
     // Trigger counters on new slide
     triggerCounters(next);
+    
+    // Force reveal visibility after animation
+    setTimeout(() => {
+      next.querySelectorAll('.reveal').forEach(r => {
+        r.style.opacity = '1';
+        r.style.transform = 'translateY(0)';
+      });
+    }, 100);
 
     setTimeout(() => {
       isAnimating = false;
@@ -1361,6 +1384,11 @@ body:hover .nav-arrow { opacity: 1; }
 
   // ——— Initial state ———
   slides[0].classList.add('active');
+  // Force first slide reveals visible
+  slides[0].querySelectorAll('.reveal').forEach(r => {
+    r.style.opacity = '1';
+    r.style.transform = 'translateY(0)';
+  });
   triggerCounters(slides[0]);
   updateUI();
 
