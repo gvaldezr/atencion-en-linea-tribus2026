@@ -131,19 +131,19 @@ a { color: var(--accent); text-decoration: none; }
 }
 
 /* Radial glows per slide type */
-.slide--glow-center::before {
+.slide--glow-center:not([data-bg])::before {
   content: '';
   position: absolute; inset: 0;
   background: radial-gradient(ellipse at 50% 80%, rgba(255,89,0,0.04) 0%, transparent 70%);
   pointer-events: none;
 }
-.slide--glow-left::before {
+.slide--glow-left:not([data-bg])::before {
   content: '';
   position: absolute; inset: 0;
   background: radial-gradient(ellipse at 30% 50%, rgba(255,89,0,0.03) 0%, transparent 60%);
   pointer-events: none;
 }
-.slide--glow-right::before {
+.slide--glow-right:not([data-bg])::before {
   content: '';
   position: absolute; inset: 0;
   background: radial-gradient(ellipse at 70% 30%, rgba(255,89,0,0.03) 0%, transparent 60%);
@@ -782,227 +782,73 @@ body:hover .nav-arrow { opacity: 1; }
   pointer-events: none;
 }
 
-/* Slide 0 — Portada: Oficinas CAA (foto real) */
-.slide[data-bg="portada"]::before {
-  background-image: url(assets/slide01_portada.jpg);
-}
-.slide[data-bg="portada"]::after {
-  background: linear-gradient(
-    to bottom,
-    rgba(13,13,13,0.55) 0%,
-    rgba(13,13,13,0.4) 40%,
-    rgba(13,13,13,0.7) 100%
-  );
+/* ═══ IMAGE BACKGROUNDS — Clean implementation ═══ */
+
+/* Base: all slides with data-bg get a ::before for the background image */
+.slide[data-bg]::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  z-index: -2;
 }
 
-/* Slide 1 — Campus en silencio: Explanada B/N (foto real + CSS grayscale) */
-.slide[data-bg="campus-vacio"]::before {
-  background-image: url(assets/slide02_campus_vacio.jpg);
-  filter: grayscale(1) contrast(1.3) brightness(0.65);
-}
-.slide[data-bg="campus-vacio"]::after {
-  background: linear-gradient(
-    to bottom,
-    rgba(13,13,13,0.5) 0%,
-    rgba(13,13,13,0.35) 50%,
-    rgba(13,13,13,0.6) 100%
-  );
-}
-
-/* Slide 4 — WhatsApp (IA generada) */
-.slide[data-bg="whatsapp"]::before {
-  background-image: url(assets/slide05_whatsapp.jpg);
-}
-.slide[data-bg="whatsapp"]::after {
-  background: linear-gradient(
-    to bottom,
-    rgba(13,13,13,0.55) 0%,
-    rgba(13,13,13,0.4) 50%,
-    rgba(13,13,13,0.6) 100%
-  );
-}
-
-/* Slide 5 — 150 conversaciones: sobrecarga (IA generada, overlay más oscuro) */
-.slide[data-bg="sobrecarga"]::before {
-  background-image: url(assets/slide06_sobrecarga.jpg);
-}
-.slide[data-bg="sobrecarga"]::after {
-  background: linear-gradient(
-    rgba(13,13,13,0.7),
-    rgba(13,13,13,0.8)
-  );
-}
-
-/* Slide 6 — Necesitábamos un pacto: silueta amanecer (IA, overlay sutil) */
-.slide[data-bg="pacto"]::before {
-  background-image: url(assets/slide07_pacto.jpg);
-}
-.slide[data-bg="pacto"]::after {
-  background: linear-gradient(
-    to bottom,
-    rgba(13,13,13,0.45) 0%,
-    rgba(13,13,13,0.35) 50%,
-    rgba(13,13,13,0.5) 100%
-  );
-}
-
-/* Slide 7 — El pacto / decisión: manos mesa (IA generada) */
-.slide[data-bg="colaboracion"]::before {
-  background-image: url(assets/slide08_colaboracion.jpg);
-}
-.slide[data-bg="colaboracion"]::after {
-  background: linear-gradient(
-    to bottom,
-    rgba(13,13,13,0.55) 0%,
-    rgba(26,26,26,0.5) 50%,
-    rgba(13,13,13,0.65) 100%
-  );
-}
-
-/* Slide 8 & 9 — Timeline: TecniA (foto real, very dark overlay) */
-.slide[data-bg="timeline"]::before {
-  background-image: url(assets/slide09_tecnia.jpg);
-  filter: brightness(0.7) saturate(0.6);
-}
-.slide[data-bg="timeline"]::after {
-  background: linear-gradient(
-    rgba(13,13,13,0.78),
-    rgba(26,26,26,0.82)
-  );
-}
-
-/* Slide 11 — Ecosistema: Edificio 5 interior (foto real) */
-.slide[data-bg="ecosistema"]::before {
-  background-image: url(assets/slide12_edificio5.jpg);
-}
-.slide[data-bg="ecosistema"]::after {
-  background: linear-gradient(
-    to bottom,
-    rgba(13,13,13,0.6) 0%,
-    rgba(13,13,13,0.5) 50%,
-    rgba(13,13,13,0.65) 100%
-  );
-}
-
-/* Slide 12 — Métricas: bokeh campus nocturno (IA, dark overlay for numbers) */
-.slide[data-bg="metricas"]::before {
-  background-image: url(assets/slide13_bokeh.jpg);
-}
-.slide[data-bg="metricas"]::after {
-  background: linear-gradient(
-    rgba(13,13,13,0.75),
-    rgba(13,13,13,0.85)
-  );
-}
-
-/* Slide 13 — Contraste: split background on each contrast-side */
-.slide[data-bg="contraste"] .contrast-before {
-  background-image: linear-gradient(rgba(17,17,17,0.55), rgba(17,17,17,0.6)), url(assets/slide14_antes.jpg);
-  background-size: cover, cover;
-  background-position: center, center;
-}
-.slide[data-bg="contraste"] .contrast-after {
-  background-image: linear-gradient(135deg, rgba(255,89,0,0.06), rgba(255,89,0,0.01)), linear-gradient(rgba(13,13,13,0.4), rgba(13,13,13,0.45)), url(assets/slide14_despues.jpg);
-  background-size: cover, cover, cover;
-  background-position: center, center, center;
-}
-
-/* Slide 15 — Reconocimiento: equipo siluetas (IA, subtle overlay) */
-.slide[data-bg="reconocimiento"]::before {
-  background-image: url(assets/slide16_equipo.jpg);
-}
-.slide[data-bg="reconocimiento"]::after {
-  background: linear-gradient(
-    to bottom,
-    rgba(13,13,13,0.45) 0%,
-    rgba(13,13,13,0.35) 50%,
-    rgba(13,13,13,0.5) 100%
-  );
-}
-
-/* Slide 16 — Eligieron trabajar juntas: objetos hilo naranja (IA, subtle) */
-.slide[data-bg="eligieron"]::before {
-  background-image: url(assets/slide17_objetos.jpg);
-}
-.slide[data-bg="eligieron"]::after {
-  background: linear-gradient(
-    to bottom,
-    rgba(13,13,13,0.5) 0%,
-    rgba(13,13,13,0.4) 50%,
-    rgba(13,13,13,0.55) 100%
-  );
-}
-
-/* Slide 17 — Frase cierre: campus noche (foto real, subtle para belleza) */
-.slide[data-bg="frase-cierre"]::before {
-  background-image: url(assets/slide18_noche.jpg);
-}
-.slide[data-bg="frase-cierre"]::after {
-  background: linear-gradient(
-    to bottom,
-    rgba(13,13,13,0.4) 0%,
-    rgba(13,13,13,0.3) 40%,
-    rgba(13,13,13,0.55) 100%
-  );
-}
-
-/* Slide 18 — Final: drone rectoría (foto real) */
-.slide[data-bg="final"]::before {
-  background-image: url(assets/slide19_drone.jpg);
-  filter: brightness(0.85) saturate(0.8);
-}
-.slide[data-bg="final"]::after {
-  background: linear-gradient(
-    to bottom,
-    rgba(13,13,13,0.6) 0%,
-    rgba(13,13,13,0.5) 50%,
-    rgba(13,13,13,0.7) 100%
-  );
-}
-
-/* Ensure proper z-index stacking for background slides */
-.slide[data-bg] {
-  position: relative;
-}
-.slide[data-bg]::before,
+/* Dark overlay for text legibility */
 .slide[data-bg]::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
   pointer-events: none;
 }
 
-/* Override solid backgrounds when photo is present */
+/* Individual slide backgrounds */
+.slide[data-bg="portada"]::before { background-image: url(assets/slide01_portada.jpg); }
+.slide[data-bg="portada"]::after { background: linear-gradient(to bottom, rgba(13,13,13,0.55), rgba(13,13,13,0.4) 40%, rgba(13,13,13,0.7)); }
+
+.slide[data-bg="campus-vacio"]::before { background-image: url(assets/slide02_campus_vacio.jpg); filter: grayscale(1) contrast(1.3) brightness(0.65); }
+.slide[data-bg="campus-vacio"]::after { background: linear-gradient(to bottom, rgba(13,13,13,0.5), rgba(13,13,13,0.35) 50%, rgba(13,13,13,0.6)); }
+
+.slide[data-bg="whatsapp"]::before { background-image: url(assets/slide05_whatsapp.jpg); }
+.slide[data-bg="whatsapp"]::after { background: linear-gradient(to bottom, rgba(13,13,13,0.55), rgba(13,13,13,0.4) 50%, rgba(13,13,13,0.6)); }
+
+.slide[data-bg="sobrecarga"]::before { background-image: url(assets/slide06_sobrecarga.jpg); }
+.slide[data-bg="sobrecarga"]::after { background: linear-gradient(rgba(13,13,13,0.7), rgba(13,13,13,0.8)); }
+
+.slide[data-bg="pacto"]::before { background-image: url(assets/slide07_pacto.jpg); }
+.slide[data-bg="pacto"]::after { background: linear-gradient(to bottom, rgba(13,13,13,0.45), rgba(13,13,13,0.35) 50%, rgba(13,13,13,0.5)); }
+
+.slide[data-bg="colaboracion"]::before { background-image: url(assets/slide08_colaboracion.jpg); }
+.slide[data-bg="colaboracion"]::after { background: linear-gradient(to bottom, rgba(13,13,13,0.55), rgba(26,26,26,0.5) 50%, rgba(13,13,13,0.65)); }
+
+.slide[data-bg="timeline"]::before { background-image: url(assets/slide09_tecnia.jpg); filter: brightness(0.7) saturate(0.6); }
+.slide[data-bg="timeline"]::after { background: linear-gradient(rgba(13,13,13,0.78), rgba(26,26,26,0.82)); }
+
+.slide[data-bg="ecosistema"]::before { background-image: url(assets/slide12_edificio5.jpg); }
+.slide[data-bg="ecosistema"]::after { background: linear-gradient(to bottom, rgba(13,13,13,0.6), rgba(13,13,13,0.5) 50%, rgba(13,13,13,0.65)); }
+
+.slide[data-bg="metricas"]::before { background-image: url(assets/slide13_bokeh.jpg); }
+.slide[data-bg="metricas"]::after { background: linear-gradient(rgba(13,13,13,0.75), rgba(13,13,13,0.85)); }
+
+.slide[data-bg="reconocimiento"]::before { background-image: url(assets/slide16_equipo.jpg); }
+.slide[data-bg="reconocimiento"]::after { background: linear-gradient(to bottom, rgba(13,13,13,0.45), rgba(13,13,13,0.35) 50%, rgba(13,13,13,0.5)); }
+
+.slide[data-bg="eligieron"]::before { background-image: url(assets/slide17_objetos.jpg); }
+.slide[data-bg="eligieron"]::after { background: linear-gradient(to bottom, rgba(13,13,13,0.5), rgba(13,13,13,0.4) 50%, rgba(13,13,13,0.55)); }
+
+.slide[data-bg="frase-cierre"]::before { background-image: url(assets/slide18_noche.jpg); }
+.slide[data-bg="frase-cierre"]::after { background: linear-gradient(to bottom, rgba(13,13,13,0.4), rgba(13,13,13,0.3) 40%, rgba(13,13,13,0.55)); }
+
+.slide[data-bg="final"]::before { background-image: url(assets/slide19_drone.jpg); filter: brightness(0.85) saturate(0.8); }
+.slide[data-bg="final"]::after { background: linear-gradient(to bottom, rgba(13,13,13,0.6), rgba(13,13,13,0.5) 50%, rgba(13,13,13,0.7)); }
+
+/* Override solid backgrounds for slides with images */
 .slide--bg-primary[data-bg],
 .slide--bg-deep[data-bg] {
   background: transparent !important;
 }
-
-/* Override glow pseudo-elements: use ::before for background, move glow to dedicated div */
-.slide[data-bg].slide--glow-center::before { background-size: cover; background-position: center; background-repeat: no-repeat; }
-.slide[data-bg].slide--glow-left::before { background-size: cover; background-position: center; background-repeat: no-repeat; }
-.slide[data-bg].slide--glow-right::before { background-size: cover; background-position: center; background-repeat: no-repeat; }
-
-
-
-/* ═══ FIX: Disable glow ::before when data-bg image is present ═══ */
-.slide[data-bg].slide--glow-center::before,
-.slide[data-bg].slide--glow-left::before,
-.slide[data-bg].slide--glow-right::before {
-  background: none !important;
-}
-
-/* Re-apply background-image from data-bg rules with high specificity */
-.slide[data-bg="portada"].slide--glow-center::before { background-image: url(assets/slide01_portada.jpg) !important; background-size: cover !important; background-position: center !important; }
-.slide[data-bg="campus-vacio"].slide--glow-center::before { background-image: url(assets/slide02_campus_vacio.jpg) !important; background-size: cover !important; background-position: center !important; filter: grayscale(1) contrast(1.3) brightness(0.65); }
-.slide[data-bg="whatsapp"].slide--glow-left::before { background-image: url(assets/slide05_whatsapp.jpg) !important; background-size: cover !important; background-position: center !important; }
-.slide[data-bg="sobrecarga"].slide--glow-left::before { background-image: url(assets/slide06_sobrecarga.jpg) !important; background-size: cover !important; background-position: center !important; }
-.slide[data-bg="pacto"].slide--glow-left::before { background-image: url(assets/slide07_pacto.jpg) !important; background-size: cover !important; background-position: center !important; }
-.slide[data-bg="colaboracion"].slide--bg-primary::before { background-image: url(assets/slide08_colaboracion.jpg) !important; background-size: cover !important; background-position: center !important; }
-.slide[data-bg="timeline"].slide--bg-primary::before { background-image: url(assets/slide09_tecnia.jpg) !important; background-size: cover !important; background-position: center !important; filter: brightness(0.7) saturate(0.6); }
-.slide[data-bg="ecosistema"].slide--glow-right::before { background-image: url(assets/slide12_edificio5.jpg) !important; background-size: cover !important; background-position: center !important; }
-.slide[data-bg="metricas"].slide--glow-right::before { background-image: url(assets/slide13_bokeh.jpg) !important; background-size: cover !important; background-position: center !important; }
-.slide[data-bg="reconocimiento"].slide--glow-center::before { background-image: url(assets/slide16_equipo.jpg) !important; background-size: cover !important; background-position: center !important; }
-.slide[data-bg="eligieron"].slide--glow-center::before { background-image: url(assets/slide17_objetos.jpg) !important; background-size: cover !important; background-position: center !important; }
-.slide[data-bg="frase-cierre"].slide--glow-center::before { background-image: url(assets/slide18_noche.jpg) !important; background-size: cover !important; background-position: center !important; }
-.slide[data-bg="final"].slide--glow-center::before { background-image: url(assets/slide19_drone.jpg) !important; background-size: cover !important; background-position: center !important; filter: brightness(0.85) saturate(0.8); }
 
 </style>
 </head>
