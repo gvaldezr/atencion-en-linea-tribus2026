@@ -164,7 +164,7 @@ TOTAL: 5:20 (320s) — Margen de seguridad: 10s bajo el límite de 5:30
 | 0:35 | 35 | 45s | **V1** | **Acto 2** | WhatsApp personal 24/7. Desgaste. Tawk.to como parche. La imagen de las 11 PM. "No veían las 14 horas." | Tensión creciente. Ritmo más rápido que Acto 1. |
 | 1:20 | 80 | 5s | — | — | *Pausa + transición visual* | V1 retrocede. V2 avanza o toma la palabra. Respiración del público. |
 | 1:25 | 85 | 25s | **V2** | **Acto 3a** | Sep 2020: CAA se une. "Yo voy." La alianza DTI+CAA. +150 casos, sin bots. Solo personas. | Cambio de energía: de la tensión a la esperanza. |
-| 1:50 | 110 | 25s | **V2** | **Acto 3b** | Dic 2020: WhatsApp Business API, Rocket.Chat, Twilio. Pioneros en educación en MX. La apuesta. | Orgullo contenido. Mencionar tech → volver a la decisión humana. |
+| 1:50 | 110 | 25s | **V2** | **Acto 3b** | Dic 2020: WhatsApp Business API, Rocket.Chat, Twilio. Pioneros en atención omnicanal en educación superior en MX. La apuesta. | Orgullo contenido. Mencionar tech → volver a la decisión humana. |
 | 2:15 | 135 | 20s | **V2** | **Acto 3c** | Ene 2021: Go-live. El problema del pool. Colapso primera línea. Honestidad: "también nos equivocamos". | Momento de vulnerabilidad. Humaniza. |
 | 2:35 | 155 | 20s | **V2** | **Acto 3d** | 2021: Nace LeonEl Bot. ~2022: Op. Académica + Escuelas se integran. La mesa crece. | Ritmo acumulativo. Cada área = un nombre que se suma. |
 | 2:55 | 175 | 25s | **V2** | **Acto 4a** | ~2024: Operaciones como 3er pilar. GLPI desde Mayab → adoptado por red Anáhuac y SERUA. Exportamos solución. | Orgullo local. "Lo que nació aquí cruzó fronteras." |

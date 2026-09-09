@@ -101,7 +101,7 @@ No fue una directriz. No vino de un plan maestro. Fue un equipo que decidió con
 
 **[1:50]** *[Slide: "Diciembre 2020 · Pioneros". Logos de WhatsApp Business API + Rocket.Chat + Twilio.]*
 
-Y tres meses después, hicimos algo que ninguna universidad en México había hecho: conectar WhatsApp Business a un sistema de atención profesional. Rocket.Chat. Twilio. Protocolo de líneas de servicio. Lo que no existía… lo inventamos.
+Y tres meses después, hicimos algo que muy pocas instituciones educativas en México habían hecho: conectar WhatsApp Business API a un sistema de atención profesional omnicanal — no como canal de marketing, sino como ventanilla única de servicio. Rocket.Chat. Twilio. Protocolo de líneas de servicio. Lo que no existía… lo inventamos.
 
 *[Ritmo empieza a acelerar.]*
 
@@ -266,7 +266,7 @@ Gracias.
 **Acto III — El pacto (1:25 – 3:05)**
 - Sep 2020: CAA toca la puerta de DTI → *"Nosotros también necesitamos estar ahí."*
 - No fue directriz. Fue decisión entre equipos. 6 agentes + 6,000 alumnos. Sin bots.
-- Dic 2020: WhatsApp Business API + Rocket.Chat + Twilio → **pioneros en educación en MX**.
+- Dic 2020: WhatsApp Business API + Rocket.Chat + Twilio → **pioneros en atención omnicanal en educación superior en MX**.
 - *"Lo que no existía, lo inventamos."*
 - 2022: Operación Académica + Escuelas. Nace **LeonEl Bot** → proteger a primera línea, no reemplazar.
 - **Giro (2024):** Operaciones llega. Mantenimiento, seguridad, Mayabus, salud. +45 personas.
@@ -335,7 +335,7 @@ Necesitábamos más que buena voluntad. Necesitábamos un pacto.
 
 Y ese pacto empezó cuando el Centro de Atención a Alumnos tocó la puerta de TI y dijo: *"Nosotros también necesitamos estar ahí."* No fue una directriz. Fue un acto de confianza entre equipos.
 
-En diciembre de ese año hicimos algo que ninguna universidad en México había hecho: conectar WhatsApp Business a un sistema de atención profesional. Lo que no existía, lo inventamos.
+En diciembre de ese año hicimos algo que muy pocas instituciones educativas en México habían hecho: conectar WhatsApp Business API a un sistema de atención profesional omnicanal — no como canal de marketing, sino como ventanilla única de servicio. Lo que no existía, lo inventamos.
 
 **[1:15]**
 
