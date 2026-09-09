@@ -2,16 +2,16 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 <title>La Línea Invisible · Atención en Línea · Universidad Anáhuac Mayab</title>
 <meta name="description" content="La historia de cómo un ecosistema de atención transformó la Universidad Anáhuac Mayab. 6 años. 60 personas. Una línea que nunca se rompió.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    DESIGN TOKENS
-   ═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════ */
 :root {
   --bg-deep: #0D0D0D;
   --bg-primary: #1A1A1A;
@@ -43,16 +43,18 @@
   --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-normal: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
   --transition-slow: 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  --slide-transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    RESET & BASE
-   ═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════ */
 *, *::before, *::after {
   margin: 0; padding: 0; box-sizing: border-box;
 }
-html {
-  scroll-behavior: smooth;
+html, body {
+  width: 100%; height: 100%;
+  overflow: hidden;
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -62,7 +64,8 @@ body {
   background: var(--bg-deep);
   color: var(--text-primary);
   line-height: 1.6;
-  overflow-x: hidden;
+  cursor: default;
+  -webkit-tap-highlight-color: transparent;
 }
 ::selection {
   background: var(--accent);
@@ -71,98 +74,105 @@ body {
 img, svg { max-width: 100%; height: auto; }
 a { color: var(--accent); text-decoration: none; }
 
-/* ═══════════════════════════════════════════════
-   SCROLL PROGRESS BAR
-   ═══════════════════════════════════════════════ */
-.scroll-progress {
-  position: fixed; top: 0; left: 0;
-  width: 0%; height: 3px;
-  background: linear-gradient(90deg, var(--accent), var(--accent-hover));
-  z-index: 9999;
-  transition: width 0.1s linear;
+/* ═══════════════════════════════════════════════════
+   SLIDE ENGINE
+   ═══════════════════════════════════════════════════ */
+.deck {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  background: var(--bg-deep);
 }
 
-/* ═══════════════════════════════════════════════
-   NAVIGATION
-   ═══════════════════════════════════════════════ */
-.nav {
-  position: fixed; top: 0; left: 0; right: 0;
-  z-index: 100;
-  padding: var(--space-md) var(--space-xl);
-  display: flex; justify-content: space-between; align-items: center;
-  background: rgba(13,13,13,0.85);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid var(--border);
-  transform: translateY(-100%);
-  transition: transform var(--transition-normal);
+.slide {
+  position: absolute;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 60px 40px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(60px);
+  transition: opacity var(--slide-transition),
+              transform var(--slide-transition),
+              visibility 0s linear 0.5s;
+  will-change: opacity, transform;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
 }
-.nav.visible { transform: translateY(0); }
-.nav-logo svg { height: 24px; width: auto; }
-.nav-dots {
-  display: flex; gap: var(--space-sm); align-items: center;
+.slide::-webkit-scrollbar { width: 4px; }
+.slide::-webkit-scrollbar-track { background: transparent; }
+.slide::-webkit-scrollbar-thumb { background: rgba(255,89,0,0.3); border-radius: 2px; }
+
+.slide.active {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(0);
+  transition: opacity var(--slide-transition),
+              transform var(--slide-transition),
+              visibility 0s linear 0s;
+  z-index: 2;
 }
-.nav-dot {
-  width: 8px; height: 8px;
-  border-radius: 50%;
-  background: var(--text-muted);
-  border: none; cursor: pointer;
-  transition: all var(--transition-fast);
-  padding: 0;
-}
-.nav-dot:hover { background: var(--text-secondary); }
-.nav-dot.active {
-  background: var(--accent);
-  box-shadow: 0 0 12px var(--accent-glow-strong);
-  width: 24px; border-radius: 4px;
-}
-.nav-label {
-  font-size: 11px;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--text-secondary);
-  margin-left: var(--space-md);
+.slide.prev {
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-60px);
 }
 
-/* ═══════════════════════════════════════════════
-   SECTION BASE
-   ═══════════════════════════════════════════════ */
-.section {
-  min-height: 100vh;
-  display: flex; flex-direction: column;
-  justify-content: center; align-items: center;
-  padding: var(--space-4xl) var(--space-xl);
-  position: relative;
-}
-.section-inner {
-  max-width: 900px; width: 100%;
+.slide-inner {
+  max-width: 900px;
+  width: 100%;
   position: relative;
 }
 
-/* ═══════════════════════════════════════════════
-   REVEAL ANIMATIONS
-   ═══════════════════════════════════════════════ */
+/* Radial glows per slide type */
+.slide--glow-center::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 50% 80%, rgba(255,89,0,0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+.slide--glow-left::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 50%, rgba(255,89,0,0.03) 0%, transparent 60%);
+  pointer-events: none;
+}
+.slide--glow-right::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 70% 30%, rgba(255,89,0,0.03) 0%, transparent 60%);
+  pointer-events: none;
+}
+.slide--bg-primary { background: var(--bg-primary); }
+.slide--bg-deep { background: var(--bg-deep); }
+
+/* ═══════════════════════════════════════════════════
+   REVEAL ANIMATIONS (slide-triggered)
+   ═══════════════════════════════════════════════════ */
 .reveal {
   opacity: 0;
-  transform: translateY(40px);
-  transition: opacity 0.8s cubic-bezier(0.4, 0, 0.2, 1),
-              transform 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  transform: translateY(30px);
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+              transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.reveal.visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-.reveal-delay-1 { transition-delay: 0.15s; }
-.reveal-delay-2 { transition-delay: 0.3s; }
-.reveal-delay-3 { transition-delay: 0.45s; }
-.reveal-delay-4 { transition-delay: 0.6s; }
-.reveal-delay-5 { transition-delay: 0.75s; }
-.reveal-delay-6 { transition-delay: 0.9s; }
+.slide.active .reveal { opacity: 1; transform: translateY(0); }
+.slide.active .reveal-d1 { transition-delay: 0.12s; }
+.slide.active .reveal-d2 { transition-delay: 0.24s; }
+.slide.active .reveal-d3 { transition-delay: 0.36s; }
+.slide.active .reveal-d4 { transition-delay: 0.48s; }
+.slide.active .reveal-d5 { transition-delay: 0.60s; }
+.slide.active .reveal-d6 { transition-delay: 0.72s; }
+.slide.active .reveal-d7 { transition-delay: 0.84s; }
 
-/* ═══════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════
    TYPOGRAPHY
-   ═══════════════════════════════════════════════ */
+   ═══════════════════════════════════════════════════ */
 .act-label {
   font-size: 11px;
   font-weight: 700;
@@ -177,10 +187,11 @@ a { color: var(--accent); text-decoration: none; }
   width: 24px; height: 1px;
   background: var(--accent);
 }
+.act-label--center { justify-content: center; }
 .headline-xl {
   font-size: clamp(2.5rem, 6vw, 4.5rem);
   font-weight: 800;
-  line-height: 1.1;
+  line-height: 1.08;
   letter-spacing: -0.02em;
   color: var(--text-primary);
 }
@@ -210,7 +221,6 @@ a { color: var(--accent); text-decoration: none; }
 .accent-text { color: var(--accent); }
 .white-text { color: var(--text-primary); }
 .muted-text { color: var(--text-muted); }
-.italic { font-style: italic; }
 .quote-text {
   font-size: clamp(1.2rem, 2.5vw, 1.5rem);
   font-weight: 400;
@@ -219,37 +229,14 @@ a { color: var(--accent); text-decoration: none; }
   color: var(--text-primary);
   border-left: 3px solid var(--accent);
   padding-left: var(--space-lg);
-  margin: var(--space-2xl) 0;
-}
-
-/* ═══════════════════════════════════════════════
-   HERO — SECTION 1: EL MUNDO CONOCIDO
-   ═══════════════════════════════════════════════ */
-#hero {
-  min-height: 100vh;
-  background: var(--bg-deep);
-  position: relative;
-  overflow: hidden;
-}
-#hero::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 50% 80%, rgba(255,89,0,0.04) 0%, transparent 70%);
-  pointer-events: none;
+  margin: var(--space-lg) 0;
 }
 .hero-date {
   font-size: clamp(1rem, 2vw, 1.25rem);
   font-weight: 300;
   color: var(--text-muted);
   letter-spacing: 0.1em;
-  margin-bottom: var(--space-2xl);
-}
-.hero-campus {
-  font-size: clamp(1.1rem, 2vw, 1.35rem);
-  font-weight: 400;
-  color: var(--text-secondary);
-  margin-top: var(--space-lg);
-  line-height: 1.7;
+  margin-bottom: var(--space-lg);
 }
 .big-number {
   font-size: clamp(5rem, 15vw, 12rem);
@@ -257,7 +244,7 @@ a { color: var(--accent); text-decoration: none; }
   color: var(--accent);
   line-height: 1;
   letter-spacing: -0.03em;
-  margin: var(--space-2xl) 0 var(--space-md);
+  margin: var(--space-lg) 0 var(--space-md);
   font-variant-numeric: tabular-nums;
 }
 .big-number-label {
@@ -265,28 +252,18 @@ a { color: var(--accent); text-decoration: none; }
   font-weight: 400;
   color: var(--text-secondary);
 }
-.hero-question {
-  font-size: clamp(1.25rem, 3vw, 1.75rem);
-  font-weight: 500;
-  color: var(--text-primary);
-  line-height: 1.5;
-  margin-top: var(--space-3xl);
-  max-width: 700px;
+.section-separator {
+  width: 48px; height: 1px;
+  background: var(--accent);
+  margin: var(--space-2xl) 0;
+  opacity: 0.4;
 }
+.section-separator--center { margin: var(--space-2xl) auto; }
+.text-center { text-align: center; }
 
-/* ═══════════════════════════════════════════════
-   SECTION 2: EL CAOS
-   ═══════════════════════════════════════════════ */
-#caos {
-  background: var(--bg-deep);
-  position: relative;
-}
-#caos::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 30% 50%, rgba(255,89,0,0.03) 0%, transparent 60%);
-  pointer-events: none;
-}
+/* ═══════════════════════════════════════════════════
+   WHATSAPP ICON
+   ═══════════════════════════════════════════════════ */
 .whatsapp-icon {
   width: 64px; height: 64px;
   background: #25D366;
@@ -302,7 +279,7 @@ a { color: var(--accent); text-decoration: none; }
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--text-muted);
-  margin-bottom: var(--space-2xl);
+  margin-bottom: var(--space-md);
 }
 .impact-number {
   font-size: clamp(4rem, 12vw, 9rem);
@@ -327,26 +304,22 @@ a { color: var(--accent); text-decoration: none; }
   font-size: 14px;
   font-weight: 600;
   letter-spacing: 0.05em;
-  margin-top: var(--space-2xl);
+  margin-top: var(--space-lg);
 }
 .transition-text {
   font-size: clamp(1.15rem, 2.5vw, 1.5rem);
   font-weight: 500;
   color: var(--text-primary);
-  margin-top: var(--space-3xl);
   line-height: 1.5;
 }
 
-/* ═══════════════════════════════════════════════
-   SECTION 3: EL PACTO — TIMELINE
-   ═══════════════════════════════════════════════ */
-#pacto {
-  background: var(--bg-primary);
-}
+/* ═══════════════════════════════════════════════════
+   TIMELINE
+   ═══════════════════════════════════════════════════ */
 .timeline {
   position: relative;
   padding-left: 40px;
-  margin: var(--space-2xl) 0;
+  margin: var(--space-lg) 0;
 }
 .timeline::before {
   content: '';
@@ -357,7 +330,7 @@ a { color: var(--accent); text-decoration: none; }
 }
 .tl-item {
   position: relative;
-  padding-bottom: var(--space-2xl);
+  padding-bottom: var(--space-lg);
 }
 .tl-item:last-child { padding-bottom: 0; }
 .tl-dot {
@@ -376,7 +349,7 @@ a { color: var(--accent); text-decoration: none; }
   border-radius: 50%;
   background: var(--accent);
 }
-.tl-dot.milestone { 
+.tl-dot.milestone {
   border-color: var(--accent);
   background: var(--accent);
   box-shadow: 0 0 20px var(--accent-glow-strong);
@@ -402,43 +375,25 @@ a { color: var(--accent); text-decoration: none; }
   line-height: 1.5;
 }
 
-/* MAP */
-.map-container {
-  margin-top: var(--space-3xl);
-  text-align: center;
-}
-.mexico-map {
-  max-width: 500px;
-  margin: 0 auto var(--space-lg);
-}
+/* ═══════════════════════════════════════════════════
+   MAP
+   ═══════════════════════════════════════════════════ */
+.map-container { text-align: center; margin-top: var(--space-lg); }
+.mexico-map { max-width: 420px; margin: 0 auto var(--space-lg); }
 .map-caption {
-  font-size: 14px;
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  color: var(--text-secondary);
+  font-size: 14px; font-weight: 600;
+  letter-spacing: 0.05em; color: var(--text-secondary);
 }
 .map-caption .accent-text { font-weight: 700; }
 
-/* ═══════════════════════════════════════════════
-   SECTION 4: EL ECOSISTEMA
-   ═══════════════════════════════════════════════ */
-#ecosistema {
-  background: var(--bg-deep);
-  position: relative;
-}
-#ecosistema::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 70% 30%, rgba(255,89,0,0.03) 0%, transparent 60%);
-  pointer-events: none;
-}
-
-/* Ecosystem diagram */
+/* ═══════════════════════════════════════════════════
+   ECOSYSTEM DIAGRAM
+   ═══════════════════════════════════════════════════ */
 .eco-diagram {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: var(--space-md);
-  margin: var(--space-2xl) 0;
+  margin: var(--space-lg) 0;
 }
 .eco-node {
   background: var(--bg-elevated);
@@ -452,12 +407,9 @@ a { color: var(--accent); text-decoration: none; }
 }
 .eco-node::before {
   content: '';
-  position: absolute;
-  top: 0; left: 0; right: 0;
-  height: 3px;
-  background: var(--accent);
-  opacity: 0;
-  transition: opacity var(--transition-fast);
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 3px; background: var(--accent);
+  opacity: 0; transition: opacity var(--transition-fast);
 }
 .eco-node:hover::before { opacity: 1; }
 .eco-node:hover {
@@ -465,28 +417,18 @@ a { color: var(--accent); text-decoration: none; }
   box-shadow: var(--shadow-glow);
   transform: translateY(-2px);
 }
-.eco-icon {
-  font-size: 2rem;
-  margin-bottom: var(--space-sm);
-}
-.eco-name {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin-bottom: var(--space-xs);
-}
-.eco-role {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  line-height: 1.4;
-}
+.eco-icon { font-size: 2rem; margin-bottom: var(--space-sm); }
+.eco-name { font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: var(--space-xs); }
+.eco-role { font-size: 0.85rem; color: var(--text-muted); line-height: 1.4; }
 
-/* Metrics grid */
+/* ═══════════════════════════════════════════════════
+   METRICS
+   ═══════════════════════════════════════════════════ */
 .metrics-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: var(--space-md);
-  margin: var(--space-2xl) 0;
+  margin: var(--space-lg) 0;
 }
 .metric-card {
   background: var(--bg-elevated);
@@ -501,25 +443,27 @@ a { color: var(--accent); text-decoration: none; }
   box-shadow: var(--shadow-glow);
 }
 .metric-value {
-  font-size: clamp(2rem, 5vw, 3rem);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
   font-weight: 800;
   color: var(--accent);
   line-height: 1.1;
   font-variant-numeric: tabular-nums;
 }
 .metric-label {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
   color: var(--text-secondary);
   margin-top: var(--space-sm);
   line-height: 1.4;
 }
 
-/* Before / After contrast */
+/* ═══════════════════════════════════════════════════
+   CONTRAST BOX
+   ═══════════════════════════════════════════════════ */
 .contrast-box {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 0;
-  margin: var(--space-3xl) 0;
+  margin: var(--space-lg) 0;
   border-radius: var(--radius-lg);
   overflow: hidden;
 }
@@ -528,7 +472,7 @@ a { color: var(--accent); text-decoration: none; }
   display: flex; flex-direction: column;
   align-items: center; justify-content: center;
   text-align: center;
-  min-height: 240px;
+  min-height: 200px;
 }
 .contrast-before {
   background: #111;
@@ -538,37 +482,15 @@ a { color: var(--accent); text-decoration: none; }
   background: linear-gradient(135deg, rgba(255,89,0,0.08), rgba(255,89,0,0.02));
   border: 1px solid rgba(255,89,0,0.1);
 }
-.contrast-icon {
-  font-size: 3rem;
-  margin-bottom: var(--space-md);
-}
-.contrast-title {
-  font-size: 1.1rem;
-  font-weight: 700;
-  margin-bottom: var(--space-sm);
-}
-.contrast-desc {
-  font-size: 0.9rem;
-  color: var(--text-secondary);
-  line-height: 1.5;
-}
+.contrast-icon { font-size: 2.5rem; margin-bottom: var(--space-md); }
+.contrast-title { font-size: 1.1rem; font-weight: 700; margin-bottom: var(--space-sm); }
+.contrast-desc { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5; }
 .contrast-before .contrast-title { color: var(--text-muted); }
 .contrast-after .contrast-title { color: var(--accent); }
 
-/* ═══════════════════════════════════════════════
-   SECTION 5: EL LEGADO
-   ═══════════════════════════════════════════════ */
-#legado {
-  background: var(--bg-deep);
-  text-align: center;
-  position: relative;
-}
-#legado::before {
-  content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(ellipse at 50% 60%, rgba(255,89,0,0.05) 0%, transparent 60%);
-  pointer-events: none;
-}
+/* ═══════════════════════════════════════════════════
+   LEGACY
+   ═══════════════════════════════════════════════════ */
 .legacy-quote {
   font-size: clamp(1.3rem, 3vw, 1.8rem);
   font-weight: 400;
@@ -588,14 +510,13 @@ a { color: var(--accent); text-decoration: none; }
   line-height: 1.7;
   color: var(--text-secondary);
   max-width: 650px;
-  margin: var(--space-2xl) auto 0;
+  margin: var(--space-lg) auto 0;
 }
 .project-title {
   font-size: clamp(2.5rem, 6vw, 4rem);
   font-weight: 900;
   color: var(--text-primary);
   letter-spacing: -0.02em;
-  margin-top: var(--space-4xl);
 }
 .project-subtitle {
   font-size: clamp(0.85rem, 1.5vw, 1rem);
@@ -604,125 +525,25 @@ a { color: var(--accent); text-decoration: none; }
   letter-spacing: 0.08em;
   margin-top: var(--space-md);
 }
-.final-logo {
-  margin-top: var(--space-3xl);
-}
+.final-logo { margin-top: var(--space-2xl); }
 .final-logo svg {
-  height: 36px;
-  width: auto;
-  opacity: 0.7;
+  height: 36px; width: auto; opacity: 0.7;
   transition: opacity var(--transition-fast);
 }
 .final-logo:hover svg { opacity: 1; }
 
-/* Separator between sections */
-.section-separator {
-  width: 48px; height: 1px;
-  background: var(--accent);
-  margin: var(--space-2xl) auto;
-  opacity: 0.4;
-}
-
-/* ═══════════════════════════════════════════════
-   FOOTER
-   ═══════════════════════════════════════════════ */
-.footer {
-  padding: var(--space-2xl) var(--space-xl);
-  text-align: center;
-  border-top: 1px solid var(--border);
-  background: var(--bg-deep);
-}
-.footer p {
-  font-size: 0.8rem;
-  color: var(--text-muted);
-  letter-spacing: 0.03em;
-}
-
-/* ═══════════════════════════════════════════════
-   RESPONSIVE
-   ═══════════════════════════════════════════════ */
-@media (max-width: 768px) {
-  .section {
-    padding: var(--space-3xl) var(--space-md);
-  }
-  .metrics-grid {
-    grid-template-columns: repeat(2, 1fr);
-  }
-  .eco-diagram {
-    grid-template-columns: 1fr;
-  }
-  .contrast-box {
-    grid-template-columns: 1fr;
-  }
-  .contrast-before {
-    border-right: none;
-    border-bottom: 1px solid var(--border);
-  }
-  .nav { padding: var(--space-sm) var(--space-md); }
-  .nav-label { display: none; }
-  .timeline { padding-left: 32px; }
-  .timeline::before { left: 7px; }
-  .tl-dot { left: -32px; width: 18px; height: 18px; }
-  .tl-dot::after { width: 6px; height: 6px; }
-  .big-number {
-    font-size: clamp(4rem, 20vw, 8rem);
-  }
-}
-
-@media (max-width: 480px) {
-  .metrics-grid {
-    grid-template-columns: 1fr;
-  }
-  .section {
-    padding: var(--space-2xl) var(--space-md);
-  }
-}
-
-@media (min-width: 1200px) {
-  .section-inner { max-width: 960px; }
-}
-
-/* ═══════════════════════════════════════════════
-   ACCESSIBILITY
-   ═══════════════════════════════════════════════ */
-@media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
-    animation-duration: 0.01ms !important;
-    transition-duration: 0.01ms !important;
-  }
-  html { scroll-behavior: auto; }
-  .reveal { opacity: 1; transform: none; }
-}
-
-:focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 3px;
-}
-
-/* Counter animation */
-.counter[data-animated="true"] {
-  transition: none;
-}
-
 /* Invisible line animation */
 .invisible-line {
-  width: 80%;
-  max-width: 400px;
+  width: 80%; max-width: 400px;
   height: 2px;
-  margin: var(--space-2xl) auto;
-  background: linear-gradient(90deg, 
-    transparent, 
-    var(--accent) 20%, 
-    var(--accent) 80%, 
-    transparent
-  );
+  margin: var(--space-lg) auto;
+  background: linear-gradient(90deg, transparent, var(--accent) 20%, var(--accent) 80%, transparent);
   opacity: 0.3;
   position: relative;
 }
 .invisible-line::after {
   content: '';
-  position: absolute;
-  top: -3px; left: 0;
+  position: absolute; top: -3px; left: 0;
   width: 8px; height: 8px;
   border-radius: 50%;
   background: var(--accent);
@@ -735,527 +556,815 @@ a { color: var(--accent); text-decoration: none; }
   100% { left: calc(100% - 8px); opacity: 0; }
 }
 
-/* Glowing dot for emphasis */
-.glow-dot {
-  display: inline-block;
-  width: 6px; height: 6px;
+/* ═══════════════════════════════════════════════════
+   PROGRESS BAR (top)
+   ═══════════════════════════════════════════════════ */
+.progress-bar {
+  position: fixed; top: 0; left: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--accent), var(--accent-hover));
+  z-index: 1000;
+  transition: width 0.35s ease;
+  pointer-events: none;
+}
+
+/* ═══════════════════════════════════════════════════
+   NAVIGATION CONTROLS
+   ═══════════════════════════════════════════════════ */
+
+/* Slide number */
+.slide-counter {
+  position: fixed;
+  bottom: 24px; right: 28px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+  letter-spacing: 0.05em;
+  z-index: 100;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  opacity: 0.7;
+  transition: opacity var(--transition-fast);
+}
+
+/* Dots */
+.nav-dots {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 8px;
+  z-index: 100;
+  align-items: center;
+}
+.nav-dot {
+  width: 8px; height: 8px;
   border-radius: 50%;
+  background: var(--text-muted);
+  border: none;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  padding: 0;
+  opacity: 0.5;
+}
+.nav-dot:hover { background: var(--text-secondary); opacity: 0.8; }
+.nav-dot.active {
   background: var(--accent);
-  box-shadow: 0 0 8px var(--accent-glow-strong);
-  vertical-align: middle;
-  margin: 0 var(--space-xs);
+  box-shadow: 0 0 10px var(--accent-glow-strong);
+  width: 20px;
+  border-radius: 4px;
+  opacity: 1;
+}
+
+/* Arrow buttons */
+.nav-arrow {
+  position: fixed;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 100;
+  width: 48px; height: 72px;
+  border: none;
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.4);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  opacity: 0;
+  transition: all var(--transition-fast);
+  backdrop-filter: blur(4px);
+}
+.nav-arrow:hover {
+  background: rgba(255,89,0,0.1);
+  color: var(--accent);
+}
+.nav-arrow--prev { left: 12px; }
+.nav-arrow--next { right: 12px; }
+body:hover .nav-arrow { opacity: 1; }
+.nav-arrow.disabled { opacity: 0 !important; pointer-events: none; }
+.nav-arrow svg { width: 24px; height: 24px; }
+
+/* Fullscreen button */
+.btn-fullscreen {
+  position: fixed;
+  top: 16px; right: 16px;
+  z-index: 100;
+  width: 40px; height: 40px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(13,13,13,0.6);
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+  backdrop-filter: blur(10px);
+  transition: all var(--transition-fast);
+  opacity: 0.6;
+}
+.btn-fullscreen:hover {
+  background: rgba(255,89,0,0.1);
+  border-color: rgba(255,89,0,0.3);
+  color: var(--accent);
+  opacity: 1;
+}
+.btn-fullscreen svg { width: 18px; height: 18px; }
+.btn-fullscreen[title]::after {
+  /* tooltip handled by title attr */
+}
+
+/* Logo (top left) */
+.deck-logo {
+  position: fixed;
+  top: 18px; left: 20px;
+  z-index: 100;
+  opacity: 0;
+  transition: opacity var(--transition-normal);
+  pointer-events: none;
+}
+.deck-logo.visible { opacity: 0.6; }
+.deck-logo svg { height: 22px; width: auto; }
+
+/* Click zones (invisible) */
+.click-zone {
+  position: fixed;
+  top: 0; bottom: 80px;
+  z-index: 10;
+  cursor: pointer;
+}
+.click-zone--prev { left: 0; width: 35%; }
+.click-zone--next { right: 0; width: 35%; }
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════ */
+@media (max-width: 768px) {
+  .slide { padding: 50px 20px 80px; }
+  .metrics-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .eco-diagram { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .contrast-box { grid-template-columns: 1fr; }
+  .contrast-before { border-right: none; border-bottom: 1px solid var(--border); }
+  .nav-arrow { display: none; }
+  .click-zone--prev { width: 30%; }
+  .click-zone--next { width: 30%; }
+  .timeline { padding-left: 32px; }
+  .timeline::before { left: 7px; }
+  .tl-dot { left: -32px; width: 18px; height: 18px; }
+  .tl-dot::after { width: 6px; height: 6px; }
+  .slide-counter { bottom: 18px; right: 18px; font-size: 11px; }
+  .nav-dots { bottom: 18px; }
+  .big-number { font-size: clamp(4rem, 20vw, 8rem); }
+}
+@media (max-width: 480px) {
+  .metrics-grid { grid-template-columns: 1fr; }
+  .eco-diagram { grid-template-columns: 1fr; }
+  .slide { padding: 40px 16px 80px; }
+}
+@media (min-width: 1200px) {
+  .slide-inner { max-width: 960px; }
+}
+
+/* ═══════════════════════════════════════════════════
+   REDUCED MOTION
+   ═══════════════════════════════════════════════════ */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+  .reveal { opacity: 1; transform: none; }
+  .slide { transition: none; }
+  .slide.active { opacity: 1; visibility: visible; transform: none; }
+}
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 </style>
 </head>
 <body>
 
-<!-- Scroll Progress -->
-<div class="scroll-progress" id="scrollProgress" role="presentation"></div>
+<!-- Progress bar -->
+<div class="progress-bar" id="progressBar"></div>
 
-<!-- Navigation -->
-<nav class="nav" id="nav" aria-label="Navegación del pitch">
-  <div class="nav-logo">
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 372.54 50.51" aria-label="Anáhuac Mayab"><g fill="#FF5900"><path d="m35.92 38.84-6.34-17.84h3.31v-4.95h-16.56v4.95h3.3l-6.34 17.84h-2.58v4.93h10.75v-4.93h-2.89l1.29-3.84h9.49l1.3 3.88h-2.89v4.93h10.75v-4.97zm-14.54-8.36 3.23-9.48 3.23 9.45z"/><path d="m181.74 38.84-6.34-17.84h3.3v-4.95h-16.55v4.95h3.3l-6.34 17.85h-2.58v4.93h10.75v-4.94h-2.89l1.29-3.84h9.49l1.29 3.88h-2.88v4.93h10.74v-4.97zm-14.54-8.36 3.23-9.48 3.22 9.45z"/><path d="m41.09 38.8h2.74v-17.8h-2.74v-4.95h8.43l12.07 18.95v-14h-2.84v-4.95h10.67v4.95h-2.74v22.77h-5.24l-12.44-19.55v14.58h2.85v5h-10.76z"/><path d="m99.65 38.8h2.73v-17.8h-2.73v-4.95h10.9v4.95h-2.85v6.34h10.78v-6.34h-2.85v-4.95h10.86v4.95h-2.73v17.8h2.73v5h-10.86v-5h2.85v-6.61h-10.78v6.61h2.85v5h-10.9z"/><path d="m131.74 33v-12h-2.66v-4.95h10.92v4.95h-2.84v12.1c0 3.46 2.24 5.85 5.62 5.85s5.65-2.32 5.65-5.85v-12.1h-2.81v-4.95h10.9v4.95h-2.66v12c0 7.17-4.29 11.12-11.08 11.12s-11.04-4.07-11.04-11.12z"/><path d="m185 29.91c0-8.08 6.08-14.23 13.48-14.23 4 0 6.57 1.48 7.67 4.25v-3.88h5v10.14h-4.9c-.83-3.41-3.19-5.31-7.32-5.31-5 0-8.47 4-8.47 9a8.62 8.62 0 0 0 8.66 8.89 8.34 8.34 0 0 0 7.88-5.06l4.89 2.62a14.22 14.22 0 0 1-26.89-6.42z"/><path d="m94.48 38.84-6.34-17.84h3.3v-4.95h-16.55v4.95h3.3l-6.34 17.84h-2.58v4.93h10.73v-4.93h-2.87l1.29-3.84h9.49l1.29 3.88h-2.88v4.93h10.74v-4.97zm-14.54-8.36 3.23-9.48 3.22 9.45z"/><path d="m79.92 13.46 4.42-7.1h6.86l-6.29 7.1z"/><path d="m223.63 38.8h2.73v-17.8h-2.73v-4.95h8.16l8.09 12 8.2-12h8v4.95h-2.73v17.8h2.73v5h-11.08v-5h3.12v-14.62l-8.36 12.26-8.16-12.07v14.43h3.11v5h-11.08z"/><path d="m258.56 38.84h2.58l6.34-17.84h-3.3v-4.95h16.51v4.95h-3.22l6.34 17.85h2.62v4.93h-10.75v-4.94h2.81l-1.29-3.84h-9.49l-1.29 3.88h2.88v4.93h-10.74zm17.12-8.36-3.23-9.48-3.22 9.45z"/><path d="m291.17 38.8h3v-5.8l-7.44-12h-2.47v-4.95h10.82v4.95h-2.62l4.48 7.48 4.45-7.48h-2.47v-4.95h10.74v4.95h-2.66l-7.4 12v5.8h3v5h-11.43z"/><path d="m307.42 38.84h2.58l6.35-17.84h-3.35v-4.95h16.52v4.95h-3.23l6.34 17.85h2.62v4.93h-10.7v-4.94h2.81l-1.29-3.84h-9.5l-1.29 3.88h2.89v4.93h-10.75zm17.13-8.36-3.23-9.48-3.23 9.45z"/><path d="m337.8 38.8h2.73v-17.8h-2.73v-4.95h13.89c6.16 0 9.61 2.78 9.61 7.75a6.08 6.08 0 0 1-3.11 5.58 6.52 6.52 0 0 1 3.64 6.19c0 5.47-3.83 8.2-10 8.2h-14.03zm8-17.92v6.41h6.15c2.85 0 4-1.4 4-3.3s-1.33-3.11-4.1-3.11zm0 11.08v6.95h6.15c2.93 0 4.44-1.33 4.44-3.49s-1.32-3.42-4.66-3.42z"/></g></svg>
+<!-- Top-left logo (visible after slide 0) -->
+<div class="deck-logo" id="deckLogo">
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 372.54 50.51" aria-label="Anáhuac Mayab"><g fill="#FF5900"><path d="m35.92 38.84-6.34-17.84h3.31v-4.95h-16.56v4.95h3.3l-6.34 17.84h-2.58v4.93h10.75v-4.93h-2.89l1.29-3.84h9.49l1.3 3.88h-2.89v4.93h10.75v-4.97zm-14.54-8.36 3.23-9.48 3.23 9.45z"/><path d="m181.74 38.84-6.34-17.84h3.3v-4.95h-16.55v4.95h3.3l-6.34 17.85h-2.58v4.93h10.75v-4.94h-2.89l1.29-3.84h9.49l1.29 3.88h-2.88v4.93h10.74v-4.97zm-14.54-8.36 3.23-9.48 3.22 9.45z"/><path d="m41.09 38.8h2.74v-17.8h-2.74v-4.95h8.43l12.07 18.95v-14h-2.84v-4.95h10.67v4.95h-2.74v22.77h-5.24l-12.44-19.55v14.58h2.85v5h-10.76z"/><path d="m99.65 38.8h2.73v-17.8h-2.73v-4.95h10.9v4.95h-2.85v6.34h10.78v-6.34h-2.85v-4.95h10.86v4.95h-2.73v17.8h2.73v5h-10.86v-5h2.85v-6.61h-10.78v6.61h2.85v5h-10.9z"/><path d="m131.74 33v-12h-2.66v-4.95h10.92v4.95h-2.84v12.1c0 3.46 2.24 5.85 5.62 5.85s5.65-2.32 5.65-5.85v-12.1h-2.81v-4.95h10.9v4.95h-2.66v12c0 7.17-4.29 11.12-11.08 11.12s-11.04-4.07-11.04-11.12z"/><path d="m185 29.91c0-8.08 6.08-14.23 13.48-14.23 4 0 6.57 1.48 7.67 4.25v-3.88h5v10.14h-4.9c-.83-3.41-3.19-5.31-7.32-5.31-5 0-8.47 4-8.47 9a8.62 8.62 0 0 0 8.66 8.89 8.34 8.34 0 0 0 7.88-5.06l4.89 2.62a14.22 14.22 0 0 1-26.89-6.42z"/><path d="m94.48 38.84-6.34-17.84h3.3v-4.95h-16.55v4.95h3.3l-6.34 17.84h-2.58v4.93h10.73v-4.93h-2.87l1.29-3.84h9.49l1.29 3.88h-2.88v4.93h10.74v-4.97zm-14.54-8.36 3.23-9.48 3.22 9.45z"/><path d="m79.92 13.46 4.42-7.1h6.86l-6.29 7.1z"/><path d="m223.63 38.8h2.73v-17.8h-2.73v-4.95h8.16l8.09 12 8.2-12h8v4.95h-2.73v17.8h2.73v5h-11.08v-5h3.12v-14.62l-8.36 12.26-8.16-12.07v14.43h3.11v5h-11.08z"/><path d="m258.56 38.84h2.58l6.34-17.84h-3.3v-4.95h16.51v4.95h-3.22l6.34 17.85h2.62v4.93h-10.75v-4.94h2.81l-1.29-3.84h-9.49l-1.29 3.88h2.88v4.93h-10.74zm17.12-8.36-3.23-9.48-3.22 9.45z"/><path d="m291.17 38.8h3v-5.8l-7.44-12h-2.47v-4.95h10.82v4.95h-2.62l4.48 7.48 4.45-7.48h-2.47v-4.95h10.74v4.95h-2.66l-7.4 12v5.8h3v5h-11.43z"/><path d="m307.42 38.84h2.58l6.35-17.84h-3.35v-4.95h16.52v4.95h-3.23l6.34 17.85h2.62v4.93h-10.7v-4.94h2.81l-1.29-3.84h-9.5l-1.29 3.88h2.89v4.93h-10.75zm17.13-8.36-3.23-9.48-3.23 9.45z"/><path d="m337.8 38.8h2.73v-17.8h-2.73v-4.95h13.89c6.16 0 9.61 2.78 9.61 7.75a6.08 6.08 0 0 1-3.11 5.58 6.52 6.52 0 0 1 3.64 6.19c0 5.47-3.83 8.2-10 8.2h-14.03zm8-17.92v6.41h6.15c2.85 0 4-1.4 4-3.3s-1.33-3.11-4.1-3.11zm0 11.08v6.95h6.15c2.93 0 4.44-1.33 4.44-3.49s-1.32-3.42-4.66-3.42z"/></g></svg>
+</div>
+
+<!-- Fullscreen button -->
+<button class="btn-fullscreen" id="btnFullscreen" title="Pantalla completa (F)" aria-label="Pantalla completa">
+  <svg id="iconExpand" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3"/>
+  </svg>
+  <svg id="iconCompress" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:none;">
+    <path d="M4 14h6v6m10-10h-6V4m0 6l7-7M3 21l7-7"/>
+  </svg>
+</button>
+
+<!-- Arrow buttons -->
+<button class="nav-arrow nav-arrow--prev disabled" id="arrowPrev" aria-label="Anterior">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="15 18 9 12 15 6"/>
+  </svg>
+</button>
+<button class="nav-arrow nav-arrow--next" id="arrowNext" aria-label="Siguiente">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <polyline points="9 6 15 12 9 18"/>
+  </svg>
+</button>
+
+<!-- Click zones -->
+<div class="click-zone click-zone--prev" id="clickPrev"></div>
+<div class="click-zone click-zone--next" id="clickNext"></div>
+
+<!-- Dots -->
+<div class="nav-dots" id="navDots"></div>
+
+<!-- Slide counter -->
+<div class="slide-counter" id="slideCounter">1 / 18</div>
+
+<!-- ═══════════════════════════════════════════════
+     SLIDES
+     ═══════════════════════════════════════════════ -->
+<div class="deck" id="deck">
+
+  <!-- ============ SLIDE 0 — PORTADA ============ -->
+  <div class="slide slide--glow-center active" data-act="0">
+    <div class="slide-inner text-center">
+      <div class="reveal" style="margin-bottom: var(--space-2xl);">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 372.54 50.51" style="height:32px;width:auto;opacity:0.7;" aria-label="Anáhuac Mayab"><g fill="#FF5900"><path d="m35.92 38.84-6.34-17.84h3.31v-4.95h-16.56v4.95h3.3l-6.34 17.84h-2.58v4.93h10.75v-4.93h-2.89l1.29-3.84h9.49l1.3 3.88h-2.89v4.93h10.75v-4.97zm-14.54-8.36 3.23-9.48 3.23 9.45z"/><path d="m181.74 38.84-6.34-17.84h3.3v-4.95h-16.55v4.95h3.3l-6.34 17.85h-2.58v4.93h10.75v-4.94h-2.89l1.29-3.84h9.49l1.29 3.88h-2.88v4.93h10.74v-4.97zm-14.54-8.36 3.23-9.48 3.22 9.45z"/><path d="m41.09 38.8h2.74v-17.8h-2.74v-4.95h8.43l12.07 18.95v-14h-2.84v-4.95h10.67v4.95h-2.74v22.77h-5.24l-12.44-19.55v14.58h2.85v5h-10.76z"/><path d="m99.65 38.8h2.73v-17.8h-2.73v-4.95h10.9v4.95h-2.85v6.34h10.78v-6.34h-2.85v-4.95h10.86v4.95h-2.73v17.8h2.73v5h-10.86v-5h2.85v-6.61h-10.78v6.61h2.85v5h-10.9z"/><path d="m131.74 33v-12h-2.66v-4.95h10.92v4.95h-2.84v12.1c0 3.46 2.24 5.85 5.62 5.85s5.65-2.32 5.65-5.85v-12.1h-2.81v-4.95h10.9v4.95h-2.66v12c0 7.17-4.29 11.12-11.08 11.12s-11.04-4.07-11.04-11.12z"/><path d="m185 29.91c0-8.08 6.08-14.23 13.48-14.23 4 0 6.57 1.48 7.67 4.25v-3.88h5v10.14h-4.9c-.83-3.41-3.19-5.31-7.32-5.31-5 0-8.47 4-8.47 9a8.62 8.62 0 0 0 8.66 8.89 8.34 8.34 0 0 0 7.88-5.06l4.89 2.62a14.22 14.22 0 0 1-26.89-6.42z"/><path d="m94.48 38.84-6.34-17.84h3.3v-4.95h-16.55v4.95h3.3l-6.34 17.84h-2.58v4.93h10.73v-4.93h-2.87l1.29-3.84h9.49l1.29 3.88h-2.88v4.93h10.74v-4.97zm-14.54-8.36 3.23-9.48 3.22 9.45z"/><path d="m79.92 13.46 4.42-7.1h6.86l-6.29 7.1z"/><path d="m223.63 38.8h2.73v-17.8h-2.73v-4.95h8.16l8.09 12 8.2-12h8v4.95h-2.73v17.8h2.73v5h-11.08v-5h3.12v-14.62l-8.36 12.26-8.16-12.07v14.43h3.11v5h-11.08z"/><path d="m258.56 38.84h2.58l6.34-17.84h-3.3v-4.95h16.51v4.95h-3.22l6.34 17.85h2.62v4.93h-10.75v-4.94h2.81l-1.29-3.84h-9.49l-1.29 3.88h2.88v4.93h-10.74zm17.12-8.36-3.23-9.48-3.22 9.45z"/><path d="m291.17 38.8h3v-5.8l-7.44-12h-2.47v-4.95h10.82v4.95h-2.62l4.48 7.48 4.45-7.48h-2.47v-4.95h10.74v4.95h-2.66l-7.4 12v5.8h3v5h-11.43z"/><path d="m307.42 38.84h2.58l6.35-17.84h-3.35v-4.95h16.52v4.95h-3.23l6.34 17.85h2.62v4.93h-10.7v-4.94h2.81l-1.29-3.84h-9.5l-1.29 3.88h2.89v4.93h-10.75zm17.13-8.36-3.23-9.48-3.23 9.45z"/><path d="m337.8 38.8h2.73v-17.8h-2.73v-4.95h13.89c6.16 0 9.61 2.78 9.61 7.75a6.08 6.08 0 0 1-3.11 5.58 6.52 6.52 0 0 1 3.64 6.19c0 5.47-3.83 8.2-10 8.2h-14.03zm8-17.92v6.41h6.15c2.85 0 4-1.4 4-3.3s-1.33-3.11-4.1-3.11zm0 11.08v6.95h6.15c2.93 0 4.44-1.33 4.44-3.49s-1.32-3.42-4.66-3.42z"/></g></svg>
+      </div>
+      <p class="reveal reveal-d1" style="font-size:11px;font-weight:600;letter-spacing:0.2em;text-transform:uppercase;color:var(--text-muted);margin-bottom:var(--space-2xl);">Semana de Innovación · 2026</p>
+      <h1 class="project-title reveal reveal-d2">La Línea Invisible</h1>
+      <p class="project-subtitle reveal reveal-d3" style="margin-top: var(--space-lg);">Atención en Línea · Universidad Anáhuac Mayab · 2020–2026</p>
+      <div class="invisible-line reveal reveal-d4" style="margin-top:var(--space-3xl);"></div>
+      <p class="body-md reveal reveal-d5" style="margin-top:var(--space-lg);color:var(--text-muted);">Presiona <strong style="color:var(--text-secondary);">→</strong> o haz clic para comenzar</p>
+    </div>
   </div>
-  <div style="display:flex; align-items:center;">
-    <div class="nav-dots" role="tablist" aria-label="Secciones">
-      <button class="nav-dot active" data-section="hero" aria-label="Acto I" role="tab"></button>
-      <button class="nav-dot" data-section="caos" aria-label="Acto II" role="tab"></button>
-      <button class="nav-dot" data-section="pacto" aria-label="Acto III" role="tab"></button>
-      <button class="nav-dot" data-section="ecosistema" aria-label="Acto IV" role="tab"></button>
-      <button class="nav-dot" data-section="legado" aria-label="Acto V" role="tab"></button>
-    </div>
-    <span class="nav-label" id="navLabel">Acto I</span>
-  </div>
-</nav>
 
-<!-- ═══════════════════════════════════════════
-     SECTION 1 — EL MUNDO CONOCIDO
-     ═══════════════════════════════════════════ -->
-<section id="hero" class="section" data-act="Acto I — El Mundo Conocido" aria-label="Acto I: El Mundo Conocido">
-  <div class="section-inner">
-
-    <div class="act-label reveal">Acto I</div>
-
-    <p class="hero-date reveal reveal-delay-1">Marzo de 2020</p>
-
-    <h1 class="headline-xl reveal reveal-delay-2" style="max-width: 700px;">
-      El campus<br>en silencio.
-    </h1>
-
-    <p class="hero-campus reveal reveal-delay-3">
-      Los pasillos vacíos. Las ventanillas cerradas.<br>
-      Y del otro lado…
-    </p>
-
-    <div class="big-number reveal reveal-delay-4" aria-label="6,000 alumnos">
-      <span class="counter" data-target="6000" data-separator=",">0</span>
-    </div>
-    <p class="big-number-label reveal reveal-delay-4">alumnos que necesitaban respuestas</p>
-
-    <p class="hero-question reveal reveal-delay-5">
-      ¿Qué pasa cuando <strong class="accent-text">6,000 personas</strong> necesitan respuestas…<br>
-      y nadie sabe por dónde empezar?
-    </p>
-
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════
-     SECTION 2 — EL CAOS
-     ═══════════════════════════════════════════ -->
-<section id="caos" class="section" data-act="Acto II — El Caos" aria-label="Acto II: El Caos">
-  <div class="section-inner">
-
-    <div class="act-label reveal">Acto II</div>
-
-    <div class="reveal reveal-delay-1">
-      <div class="whatsapp-icon">
-        <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
-      </div>
-      <p class="channel-label">El canal de facto</p>
-    </div>
-
-    <p class="body-lg reveal reveal-delay-1" style="margin-bottom: var(--space-2xl);">
-      Sacamos el teléfono. WhatsApp personal.<br>
-      Sin protocolo. Sin horario. Sin límites.
-    </p>
-
-    <div class="reveal reveal-delay-2">
-      <div class="impact-number"><span class="counter" data-target="150">0</span></div>
-      <p class="impact-sub">conversaciones simultáneas · un solo agente</p>
-    </div>
-
-    <div class="time-badge reveal reveal-delay-3">11:00 PM · Fin de semana</div>
-
-    <p class="body-lg reveal reveal-delay-3" style="margin-top: var(--space-2xl);">
-      Las personas que estaban atendiendo se estaban agotando.<br>
-      No había sistema que los protegiera. No había turno que terminara.<br>
-      <span class="muted-text">Solo su voluntad.</span>
-    </p>
-
-    <div class="section-separator reveal reveal-delay-4"></div>
-
-    <p class="transition-text reveal reveal-delay-4">
-      Necesitábamos más que buena voluntad.
-    </p>
-    <p class="transition-text reveal reveal-delay-5" style="margin-top: var(--space-sm);">
-      Necesitábamos <strong class="accent-text">un pacto</strong>.
-    </p>
-
-  </div>
-</section>
-
-<!-- ═══════════════════════════════════════════
-     SECTION 3 — EL PACTO
-     ═══════════════════════════════════════════ -->
-<section id="pacto" class="section" data-act="Acto III — El Pacto" aria-label="Acto III: El Pacto">
-  <div class="section-inner">
-
-    <div class="act-label reveal">Acto III</div>
-
-    <h2 class="headline-lg reveal reveal-delay-1">
-      El pacto empezó con una<br>decisión muy sencilla.
-    </h2>
-
-    <p class="quote-text reveal reveal-delay-2">
-      "Nosotros también necesitamos estar ahí."
-    </p>
-
-    <p class="body-lg reveal reveal-delay-2" style="margin-bottom: var(--space-3xl);">
-      No fue una directriz. No vino de un plan maestro.<br>
-      Fue un equipo que decidió confiar en otro equipo.
-    </p>
-
-    <!-- Timeline -->
-    <div class="timeline">
-
-      <div class="tl-item reveal">
-        <div class="tl-dot milestone"></div>
-        <p class="tl-year">Septiembre 2020</p>
-        <p class="tl-title">Alianza DTI + CAA</p>
-        <p class="tl-desc">6 agentes atendiendo a más de 6,000 alumnos. Sin bots. Sin automatización. Solo personas.</p>
-      </div>
-
-      <div class="tl-item reveal">
-        <div class="tl-dot milestone"></div>
-        <p class="tl-year">Diciembre 2020 · Pioneros</p>
-        <p class="tl-title">WhatsApp Business API</p>
-        <p class="tl-desc">Primera universidad en México en conectar WhatsApp Business a un sistema de atención profesional. Rocket.Chat + Twilio. Lo que no existía, lo inventamos.</p>
-      </div>
-
-      <div class="tl-item reveal">
-        <div class="tl-dot"></div>
-        <p class="tl-year">2021</p>
-        <p class="tl-title">GLPI nace en Mayab</p>
-        <p class="tl-desc">Sistema de tickets con enfoque ITIL. Trazabilidad completa. Posteriormente adoptado por la Red Anáhuac y SERUA.</p>
-      </div>
-
-      <div class="tl-item reveal">
-        <div class="tl-dot"></div>
-        <p class="tl-year">2022</p>
-        <p class="tl-title">Nace LeonEl Bot · El efecto dominó</p>
-        <p class="tl-desc">Operación Académica levantó la mano. Luego las Escuelas. LeonEl no nació para reemplazar a nadie — nació para proteger a la primera línea.</p>
-      </div>
-
-      <div class="tl-item reveal">
-        <div class="tl-dot"></div>
-        <p class="tl-year">~2024</p>
-        <p class="tl-title">Operaciones se integra · +45 personas</p>
-        <p class="tl-desc">Mantenimiento. Seguridad. Limpieza. Mayabus. Urgencias de salud. La línea de atención ya no era solo académica.</p>
-      </div>
-
-      <div class="tl-item reveal">
-        <div class="tl-dot"></div>
-        <p class="tl-year">2024–2026</p>
-        <p class="tl-title">Vince (IA Generativa) · Autonomía</p>
-        <p class="tl-desc">Migración de Twilio a WhatsApp Business API propia. Evolución de LeonEl a Vince. Atención 24/7 por IA.</p>
-      </div>
-
-    </div>
-
-    <!-- Mexico Map -->
-    <div class="map-container reveal">
-      <div class="mexico-map">
-        <svg viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Mapa de México con Mérida resaltada">
-          <!-- Simplified Mexico outline -->
-          <path d="M80 120 L120 80 L180 70 L220 60 L280 50 L340 45 L380 55 L420 70 L450 90 L470 120 L480 150 L490 180 L500 200 L510 230 L500 260 L480 280 L450 300 L420 310 L400 320 L370 310 L340 300 L320 290 L300 280 L270 290 L240 310 L210 320 L180 310 L150 290 L130 270 L110 250 L90 220 L80 190 L75 160 L80 120Z" 
-                fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-          <!-- Yucatan peninsula emphasis -->
-          <path d="M420 200 L450 180 L480 170 L510 175 L520 190 L515 210 L500 225 L480 230 L460 225 L440 215 L420 200Z" 
-                fill="rgba(255,89,0,0.08)" stroke="rgba(255,89,0,0.3)" stroke-width="1.5"/>
-          <!-- Mérida dot -->
-          <circle cx="475" cy="195" r="8" fill="#FF5900" opacity="0.9">
-            <animate attributeName="r" values="6;10;6" dur="2s" repeatCount="indefinite"/>
-            <animate attributeName="opacity" values="0.9;0.5;0.9" dur="2s" repeatCount="indefinite"/>
-          </circle>
-          <circle cx="475" cy="195" r="4" fill="#FF5900"/>
-          <!-- Label -->
-          <text x="475" y="175" text-anchor="middle" fill="#FF5900" font-family="Inter, sans-serif" font-size="13" font-weight="700">MÉRIDA</text>
-          <!-- Arrows to other cities (simplified) -->
-          <line x1="475" y1="195" x2="350" y2="230" stroke="rgba(255,89,0,0.2)" stroke-width="1" stroke-dasharray="4 4"/>
-          <line x1="475" y1="195" x2="300" y2="180" stroke="rgba(255,89,0,0.2)" stroke-width="1" stroke-dasharray="4 4"/>
-          <line x1="475" y1="195" x2="250" y2="250" stroke="rgba(255,89,0,0.2)" stroke-width="1" stroke-dasharray="4 4"/>
-          <!-- Small dots for other cities -->
-          <circle cx="350" cy="230" r="3" fill="rgba(255,255,255,0.2)"/>
-          <circle cx="300" cy="180" r="3" fill="rgba(255,255,255,0.2)"/>
-          <circle cx="250" cy="250" r="3" fill="rgba(255,255,255,0.2)"/>
-        </svg>
-      </div>
-      <p class="map-caption">
-        <span class="accent-text">GLPI</span> · Nacido aquí · Adoptado por la Red Anáhuac
+  <!-- ============ SLIDE 1 — ACTO I: MARZO 2020 ============ -->
+  <div class="slide slide--glow-center" data-act="1">
+    <div class="slide-inner">
+      <div class="act-label reveal">Acto I</div>
+      <p class="hero-date reveal reveal-d1">Marzo de 2020</p>
+      <h2 class="headline-xl reveal reveal-d2" style="max-width:700px;">El campus<br>en silencio.</h2>
+      <p class="body-lg reveal reveal-d3" style="margin-top:var(--space-lg);">
+        Los pasillos vacíos. Las ventanillas cerradas.<br>
+        Y del otro lado…
       </p>
     </div>
-
   </div>
-</section>
 
-<!-- ═══════════════════════════════════════════
-     SECTION 4 — EL ECOSISTEMA
-     ═══════════════════════════════════════════ -->
-<section id="ecosistema" class="section" data-act="Acto IV — El Ecosistema" aria-label="Acto IV: El Ecosistema">
-  <div class="section-inner">
-
-    <div class="act-label reveal">Acto IV</div>
-
-    <h2 class="headline-lg reveal reveal-delay-1">
-      Hoy lo que tenemos<br>ya no es un chat.
-    </h2>
-    <p class="headline-md accent-text reveal reveal-delay-2" style="margin-top: var(--space-md);">
-      Es un ecosistema.
-    </p>
-
-    <!-- Ecosystem Diagram -->
-    <div class="eco-diagram reveal reveal-delay-2">
-      <div class="eco-node">
-        <div class="eco-icon">💬</div>
-        <p class="eco-name">Rocket.Chat</p>
-        <p class="eco-role">Conversación en tiempo real</p>
+  <!-- ============ SLIDE 2 — 6,000 ALUMNOS ============ -->
+  <div class="slide slide--glow-center" data-act="1">
+    <div class="slide-inner text-center">
+      <div class="big-number reveal" aria-label="6,000 alumnos">
+        <span class="counter" data-target="6000" data-separator=",">0</span>
       </div>
-      <div class="eco-node">
-        <div class="eco-icon">🎫</div>
-        <p class="eco-name">GLPI</p>
-        <p class="eco-role">Gestión y trazabilidad</p>
-      </div>
-      <div class="eco-node">
-        <div class="eco-icon">🤖</div>
-        <p class="eco-name">Vince</p>
-        <p class="eco-role">IA generativa · 24/7</p>
-      </div>
-      <div class="eco-node">
-        <div class="eco-icon">⚡</div>
-        <p class="eco-name">Automatizaciones</p>
-        <p class="eco-role">El tejido que conecta todo</p>
-      </div>
+      <p class="big-number-label reveal reveal-d1">alumnos que necesitaban respuestas</p>
     </div>
-
-    <!-- Connecting line visual -->
-    <div class="invisible-line reveal reveal-delay-3"></div>
-
-    <p class="body-lg reveal reveal-delay-3" style="text-align:center; margin-bottom: var(--space-3xl);">
-      Los números cuentan la historia mejor que yo.
-    </p>
-
-    <!-- Metrics -->
-    <div class="metrics-grid">
-      <div class="metric-card reveal">
-        <div class="metric-value"><span class="counter" data-target="300">0</span></div>
-        <p class="metric-label">atenciones cada día</p>
-      </div>
-      <div class="metric-card reveal reveal-delay-1">
-        <div class="metric-value"><span class="counter" data-target="2000" data-separator=",">0</span></div>
-        <p class="metric-label">en un solo día de pico</p>
-      </div>
-      <div class="metric-card reveal reveal-delay-2">
-        <div class="metric-value">+<span class="counter" data-target="60">0</span></div>
-        <p class="metric-label">personas en primera línea</p>
-      </div>
-      <div class="metric-card reveal reveal-delay-3">
-        <div class="metric-value">+<span class="counter" data-target="15">0</span></div>
-        <p class="metric-label">áreas articuladas</p>
-      </div>
-      <div class="metric-card reveal reveal-delay-4">
-        <div class="metric-value"><span class="counter" data-target="6">0</span></div>
-        <p class="metric-label">años de operación continua</p>
-      </div>
-      <div class="metric-card reveal reveal-delay-5">
-        <div class="metric-value"><span class="counter" data-target="8500" data-separator=",">0</span></div>
-        <p class="metric-label">alumnos · comunidad actual</p>
-      </div>
-    </div>
-
-    <!-- Before/After -->
-    <div class="contrast-box reveal">
-      <div class="contrast-side contrast-before">
-        <div class="contrast-icon">📱</div>
-        <p class="contrast-title">Antes</p>
-        <p class="contrast-desc">
-          Un teléfono personal.<br>
-          150 chats abiertos.<br>
-          11:00 PM. Sin protocolo.
-        </p>
-      </div>
-      <div class="contrast-side contrast-after">
-        <div class="contrast-icon">🌐</div>
-        <p class="contrast-title">Ahora</p>
-        <p class="contrast-desc">
-          Ecosistema integrado.<br>
-          Cada pregunta al lugar correcto.<br>
-          Quien atiende, también está protegido.
-        </p>
-      </div>
-    </div>
-
-    <div class="section-separator reveal"></div>
-
-    <p class="transition-text reveal" style="text-align:center;">
-      Pero un ecosistema no se mide en herramientas.
-    </p>
-    <p class="transition-text reveal reveal-delay-1" style="text-align:center; margin-top: var(--space-sm);">
-      Se mide en <strong class="accent-text">personas</strong>.
-    </p>
-
   </div>
-</section>
 
-<!-- ═══════════════════════════════════════════
-     SECTION 5 — EL LEGADO
-     ═══════════════════════════════════════════ -->
-<section id="legado" class="section" data-act="Acto V — El Legado" aria-label="Acto V: El Legado">
-  <div class="section-inner" style="text-align:center;">
-
-    <div class="act-label reveal" style="justify-content:center;">Acto V</div>
-
-    <p class="body-lg reveal reveal-delay-1" style="max-width:700px; margin: 0 auto var(--space-2xl);">
-      Hay personas en esta universidad — y fuera de ella — que durante seis años han sido la voz que contesta cuando alguien no sabe a quién acudir.
-    </p>
-
-    <p class="body-lg reveal reveal-delay-2" style="max-width:700px; margin: 0 auto var(--space-2xl);">
-      Personas que atienden a un alumno angustiado por una calificación a las ocho de la mañana… y coordinan una emergencia médica a las tres de la tarde.
-    </p>
-
-    <div class="section-separator reveal reveal-delay-2"></div>
-
-    <p class="headline-md reveal reveal-delay-3" style="max-width: 700px; margin: var(--space-2xl) auto;">
-      Esto no fue un proyecto de tecnología.<br>
-      <span class="accent-text">Fue un proyecto de confianza.</span>
-    </p>
-
-    <p class="body-lg reveal reveal-delay-3" style="max-width:650px; margin: var(--space-lg) auto var(--space-2xl);">
-      Áreas que no estaban obligadas a trabajar juntas… y eligieron hacerlo.<br>
-      Equipos que decidieron que en la Anáhuac Mayab, <strong class="white-text">nadie se queda sin respuesta</strong>.
-    </p>
-
-    <p class="body-md reveal reveal-delay-4" style="max-width:500px; margin: 0 auto var(--space-3xl);">
-      Eso no se instala. No se compra. No se replica con un software.
-    </p>
-
-    <div class="invisible-line reveal reveal-delay-4"></div>
-
-    <div class="legacy-quote reveal reveal-delay-4" style="margin-top: var(--space-3xl);">
-      Hay una línea que conecta a cada persona de esta universidad con alguien dispuesto a responder.
-      <br><br>
-      No se ve. Pero lleva <em>seis años sin romperse</em>.
+  <!-- ============ SLIDE 3 — PREGUNTA RETÓRICA ============ -->
+  <div class="slide slide--glow-center" data-act="1">
+    <div class="slide-inner">
+      <p class="headline-md reveal" style="max-width:700px;line-height:1.5;">
+        ¿Qué pasa cuando <strong class="accent-text">6,000 personas</strong> necesitan respuestas…<br>
+        y nadie sabe por dónde empezar?
+      </p>
     </div>
-
-    <p class="closing-line reveal reveal-delay-5">
-      Está hecha de <strong class="accent-text">sesenta personas</strong> que eligieron, cada día durante seis años… no soltar.
-    </p>
-
-    <!-- Project Title -->
-    <div style="margin-top: var(--space-4xl);" class="reveal reveal-delay-5">
-      <p class="project-title">La Línea Invisible</p>
-      <p class="project-subtitle">Atención en Línea · Universidad Anáhuac Mayab · 2020–2026</p>
-    </div>
-
-    <!-- Logo -->
-    <div class="final-logo reveal reveal-delay-6">
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 372.54 50.51" role="img" aria-label="Universidad Anáhuac Mayab"><g fill="#FF5900"><path d="m35.92 38.84-6.34-17.84h3.31v-4.95h-16.56v4.95h3.3l-6.34 17.84h-2.58v4.93h10.75v-4.93h-2.89l1.29-3.84h9.49l1.3 3.88h-2.89v4.93h10.75v-4.97zm-14.54-8.36 3.23-9.48 3.23 9.45z"/><path d="m181.74 38.84-6.34-17.84h3.3v-4.95h-16.55v4.95h3.3l-6.34 17.85h-2.58v4.93h10.75v-4.94h-2.89l1.29-3.84h9.49l1.29 3.88h-2.88v4.93h10.74v-4.97zm-14.54-8.36 3.23-9.48 3.22 9.45z"/><path d="m41.09 38.8h2.74v-17.8h-2.74v-4.95h8.43l12.07 18.95v-14h-2.84v-4.95h10.67v4.95h-2.74v22.77h-5.24l-12.44-19.55v14.58h2.85v5h-10.76z"/><path d="m99.65 38.8h2.73v-17.8h-2.73v-4.95h10.9v4.95h-2.85v6.34h10.78v-6.34h-2.85v-4.95h10.86v4.95h-2.73v17.8h2.73v5h-10.86v-5h2.85v-6.61h-10.78v6.61h2.85v5h-10.9z"/><path d="m131.74 33v-12h-2.66v-4.95h10.92v4.95h-2.84v12.1c0 3.46 2.24 5.85 5.62 5.85s5.65-2.32 5.65-5.85v-12.1h-2.81v-4.95h10.9v4.95h-2.66v12c0 7.17-4.29 11.12-11.08 11.12s-11.04-4.07-11.04-11.12z"/><path d="m185 29.91c0-8.08 6.08-14.23 13.48-14.23 4 0 6.57 1.48 7.67 4.25v-3.88h5v10.14h-4.9c-.83-3.41-3.19-5.31-7.32-5.31-5 0-8.47 4-8.47 9a8.62 8.62 0 0 0 8.66 8.89 8.34 8.34 0 0 0 7.88-5.06l4.89 2.62a14.22 14.22 0 0 1-26.89-6.42z"/><path d="m94.48 38.84-6.34-17.84h3.3v-4.95h-16.55v4.95h3.3l-6.34 17.84h-2.58v4.93h10.73v-4.93h-2.87l1.29-3.84h9.49l1.29 3.88h-2.88v4.93h10.74v-4.97zm-14.54-8.36 3.23-9.48 3.22 9.45z"/><path d="m79.92 13.46 4.42-7.1h6.86l-6.29 7.1z"/><path d="m223.63 38.8h2.73v-17.8h-2.73v-4.95h8.16l8.09 12 8.2-12h8v4.95h-2.73v17.8h2.73v5h-11.08v-5h3.12v-14.62l-8.36 12.26-8.16-12.07v14.43h3.11v5h-11.08z"/><path d="m258.56 38.84h2.58l6.34-17.84h-3.3v-4.95h16.51v4.95h-3.22l6.34 17.85h2.62v4.93h-10.75v-4.94h2.81l-1.29-3.84h-9.49l-1.29 3.88h2.88v4.93h-10.74zm17.12-8.36-3.23-9.48-3.22 9.45z"/><path d="m291.17 38.8h3v-5.8l-7.44-12h-2.47v-4.95h10.82v4.95h-2.62l4.48 7.48 4.45-7.48h-2.47v-4.95h10.74v4.95h-2.66l-7.4 12v5.8h3v5h-11.43z"/><path d="m307.42 38.84h2.58l6.35-17.84h-3.35v-4.95h16.52v4.95h-3.23l6.34 17.85h2.62v4.93h-10.7v-4.94h2.81l-1.29-3.84h-9.5l-1.29 3.88h2.89v4.93h-10.75zm17.13-8.36-3.23-9.48-3.23 9.45z"/><path d="m337.8 38.8h2.73v-17.8h-2.73v-4.95h13.89c6.16 0 9.61 2.78 9.61 7.75a6.08 6.08 0 0 1-3.11 5.58 6.52 6.52 0 0 1 3.64 6.19c0 5.47-3.83 8.2-10 8.2h-14.03zm8-17.92v6.41h6.15c2.85 0 4-1.4 4-3.3s-1.33-3.11-4.1-3.11zm0 11.08v6.95h6.15c2.93 0 4.44-1.33 4.44-3.49s-1.32-3.42-4.66-3.42z"/></g></svg>
-    </div>
-
   </div>
-</section>
 
-<!-- Footer -->
-<footer class="footer">
-  <p>Semana de Innovación · Anáhuac Mayab · 2026</p>
-</footer>
+  <!-- ============ SLIDE 4 — ACTO II: WHATSAPP ============ -->
+  <div class="slide slide--glow-left" data-act="2">
+    <div class="slide-inner">
+      <div class="act-label reveal">Acto II</div>
+      <div class="reveal reveal-d1">
+        <div class="whatsapp-icon">
+          <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+        </div>
+        <p class="channel-label">El canal de facto</p>
+      </div>
+      <p class="body-lg reveal reveal-d2">
+        Sacamos el teléfono. WhatsApp personal.<br>
+        Sin protocolo. Sin horario. Sin límites.
+      </p>
+    </div>
+  </div>
 
-<!-- ═══════════════════════════════════════════
-     JAVASCRIPT
-     ═══════════════════════════════════════════ -->
+  <!-- ============ SLIDE 5 — 150 CONVERSACIONES ============ -->
+  <div class="slide slide--glow-left" data-act="2">
+    <div class="slide-inner text-center">
+      <div class="impact-number reveal"><span class="counter" data-target="150">0</span></div>
+      <p class="impact-sub reveal reveal-d1">conversaciones simultáneas · un solo agente</p>
+      <div class="time-badge reveal reveal-d2">11:00 PM · Fin de semana</div>
+      <p class="body-lg reveal reveal-d3" style="margin-top:var(--space-2xl);text-align:left;">
+        Las personas que estaban atendiendo se estaban agotando.<br>
+        No había sistema que los protegiera. No había turno que terminara.<br>
+        <span class="muted-text">Solo su voluntad.</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- ============ SLIDE 6 — NECESITÁBAMOS UN PACTO ============ -->
+  <div class="slide slide--glow-left" data-act="2">
+    <div class="slide-inner text-center">
+      <div class="section-separator section-separator--center reveal"></div>
+      <p class="transition-text reveal reveal-d1">Necesitábamos más que buena voluntad.</p>
+      <p class="transition-text reveal reveal-d2" style="margin-top: var(--space-sm);">
+        Necesitábamos <strong class="accent-text">un pacto</strong>.
+      </p>
+    </div>
+  </div>
+
+  <!-- ============ SLIDE 7 — ACTO III: DECISIÓN ============ -->
+  <div class="slide slide--bg-primary" data-act="3">
+    <div class="slide-inner">
+      <div class="act-label reveal">Acto III</div>
+      <h2 class="headline-lg reveal reveal-d1">
+        El pacto empezó con una<br>decisión muy sencilla.
+      </h2>
+      <p class="quote-text reveal reveal-d2">
+        "Nosotros también necesitamos estar ahí."
+      </p>
+      <p class="body-lg reveal reveal-d3">
+        No fue una directriz. No vino de un plan maestro.<br>
+        Fue un equipo que decidió confiar en otro equipo.
+      </p>
+    </div>
+  </div>
+
+  <!-- ============ SLIDE 8 — TIMELINE PARTE 1 (2020) ============ -->
+  <div class="slide slide--bg-primary" data-act="3">
+    <div class="slide-inner">
+      <div class="timeline">
+        <div class="tl-item reveal">
+          <div class="tl-dot milestone"></div>
+          <p class="tl-year">Septiembre 2020</p>
+          <p class="tl-title">Alianza DTI + CAA</p>
+          <p class="tl-desc">6 agentes atendiendo a más de 6,000 alumnos. Sin bots. Sin automatización. Solo personas.</p>
+        </div>
+        <div class="tl-item reveal reveal-d2">
+          <div class="tl-dot milestone"></div>
+          <p class="tl-year">Diciembre 2020 · Pioneros</p>
+          <p class="tl-title">WhatsApp Business API</p>
+          <p class="tl-desc">Primera universidad en México en conectar WhatsApp Business a un sistema de atención profesional. Rocket.Chat + Twilio. Lo que no existía, lo inventamos.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SLIDE 9 — TIMELINE PARTE 2 (2021–2024) ============ -->
+  <div class="slide slide--bg-primary" data-act="3">
+    <div class="slide-inner">
+      <div class="timeline">
+        <div class="tl-item reveal">
+          <div class="tl-dot"></div>
+          <p class="tl-year">2021</p>
+          <p class="tl-title">GLPI nace en Mayab</p>
+          <p class="tl-desc">Sistema de tickets con enfoque ITIL. Trazabilidad completa. Posteriormente adoptado por la Red Anáhuac y SERUA.</p>
+        </div>
+        <div class="tl-item reveal reveal-d1">
+          <div class="tl-dot"></div>
+          <p class="tl-year">2022</p>
+          <p class="tl-title">Nace LeonEl Bot · El efecto dominó</p>
+          <p class="tl-desc">Operación Académica levantó la mano. Luego las Escuelas. LeonEl no nació para reemplazar a nadie — nació para proteger a la primera línea.</p>
+        </div>
+        <div class="tl-item reveal reveal-d2">
+          <div class="tl-dot"></div>
+          <p class="tl-year">~2024</p>
+          <p class="tl-title">Operaciones se integra · +45 personas</p>
+          <p class="tl-desc">Mantenimiento. Seguridad. Limpieza. Mayabus. Urgencias de salud. La línea de atención ya no era solo académica.</p>
+        </div>
+        <div class="tl-item reveal reveal-d3">
+          <div class="tl-dot"></div>
+          <p class="tl-year">2024–2026</p>
+          <p class="tl-title">Vince (IA Generativa) · Autonomía</p>
+          <p class="tl-desc">Migración de Twilio a WhatsApp Business API propia. Evolución de LeonEl a Vince. Atención 24/7 por IA.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SLIDE 10 — GLPI MAPA ============ -->
+  <div class="slide slide--bg-primary" data-act="3">
+    <div class="slide-inner text-center">
+      <h3 class="headline-md reveal" style="margin-bottom:var(--space-lg);">Nacido aquí. Adoptado por la Red.</h3>
+      <div class="map-container reveal reveal-d1">
+        <div class="mexico-map">
+          <svg viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Mapa de México con Mérida resaltada">
+            <path d="M80 120 L120 80 L180 70 L220 60 L280 50 L340 45 L380 55 L420 70 L450 90 L470 120 L480 150 L490 180 L500 200 L510 230 L500 260 L480 280 L450 300 L420 310 L400 320 L370 310 L340 300 L320 290 L300 280 L270 290 L240 310 L210 320 L180 310 L150 290 L130 270 L110 250 L90 220 L80 190 L75 160 L80 120Z" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
+            <path d="M420 200 L450 180 L480 170 L510 175 L520 190 L515 210 L500 225 L480 230 L460 225 L440 215 L420 200Z" fill="rgba(255,89,0,0.08)" stroke="rgba(255,89,0,0.3)" stroke-width="1.5"/>
+            <circle cx="475" cy="195" r="8" fill="#FF5900" opacity="0.9">
+              <animate attributeName="r" values="6;10;6" dur="2s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.9;0.5;0.9" dur="2s" repeatCount="indefinite"/>
+            </circle>
+            <circle cx="475" cy="195" r="4" fill="#FF5900"/>
+            <text x="475" y="175" text-anchor="middle" fill="#FF5900" font-family="Inter, sans-serif" font-size="13" font-weight="700">MÉRIDA</text>
+            <line x1="475" y1="195" x2="350" y2="230" stroke="rgba(255,89,0,0.2)" stroke-width="1" stroke-dasharray="4 4"/>
+            <line x1="475" y1="195" x2="300" y2="180" stroke="rgba(255,89,0,0.2)" stroke-width="1" stroke-dasharray="4 4"/>
+            <line x1="475" y1="195" x2="250" y2="250" stroke="rgba(255,89,0,0.2)" stroke-width="1" stroke-dasharray="4 4"/>
+            <circle cx="350" cy="230" r="3" fill="rgba(255,255,255,0.2)"/>
+            <circle cx="300" cy="180" r="3" fill="rgba(255,255,255,0.2)"/>
+            <circle cx="250" cy="250" r="3" fill="rgba(255,255,255,0.2)"/>
+          </svg>
+        </div>
+        <p class="map-caption"><span class="accent-text">GLPI</span> · Nacido aquí · Adoptado por la Red Anáhuac</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SLIDE 11 — ACTO IV: ECOSISTEMA ============ -->
+  <div class="slide slide--glow-right" data-act="4">
+    <div class="slide-inner">
+      <div class="act-label reveal">Acto IV</div>
+      <h2 class="headline-lg reveal reveal-d1">Hoy lo que tenemos<br>ya no es un chat.</h2>
+      <p class="headline-md accent-text reveal reveal-d2" style="margin-top: var(--space-md);">Es un ecosistema.</p>
+      <div class="eco-diagram reveal reveal-d3">
+        <div class="eco-node">
+          <div class="eco-icon">💬</div>
+          <p class="eco-name">Rocket.Chat</p>
+          <p class="eco-role">Conversación en tiempo real</p>
+        </div>
+        <div class="eco-node">
+          <div class="eco-icon">🎫</div>
+          <p class="eco-name">GLPI</p>
+          <p class="eco-role">Gestión y trazabilidad</p>
+        </div>
+        <div class="eco-node">
+          <div class="eco-icon">🤖</div>
+          <p class="eco-name">Vince</p>
+          <p class="eco-role">IA generativa · 24/7</p>
+        </div>
+        <div class="eco-node">
+          <div class="eco-icon">⚡</div>
+          <p class="eco-name">Automatizaciones</p>
+          <p class="eco-role">El tejido que conecta todo</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SLIDE 12 — MÉTRICAS ============ -->
+  <div class="slide slide--glow-right" data-act="4">
+    <div class="slide-inner">
+      <div class="invisible-line reveal"></div>
+      <p class="body-lg reveal reveal-d1" style="text-align:center; margin-bottom: var(--space-2xl);">
+        Los números cuentan la historia mejor que yo.
+      </p>
+      <div class="metrics-grid">
+        <div class="metric-card reveal reveal-d1">
+          <div class="metric-value"><span class="counter" data-target="300">0</span></div>
+          <p class="metric-label">atenciones cada día</p>
+        </div>
+        <div class="metric-card reveal reveal-d2">
+          <div class="metric-value"><span class="counter" data-target="2000" data-separator=",">0</span></div>
+          <p class="metric-label">en un solo día de pico</p>
+        </div>
+        <div class="metric-card reveal reveal-d3">
+          <div class="metric-value">+<span class="counter" data-target="60">0</span></div>
+          <p class="metric-label">personas en primera línea</p>
+        </div>
+        <div class="metric-card reveal reveal-d3">
+          <div class="metric-value">+<span class="counter" data-target="15">0</span></div>
+          <p class="metric-label">áreas articuladas</p>
+        </div>
+        <div class="metric-card reveal reveal-d4">
+          <div class="metric-value"><span class="counter" data-target="6">0</span></div>
+          <p class="metric-label">años de operación continua</p>
+        </div>
+        <div class="metric-card reveal reveal-d4">
+          <div class="metric-value"><span class="counter" data-target="8500" data-separator=",">0</span></div>
+          <p class="metric-label">alumnos · comunidad actual</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SLIDE 13 — CONTRASTE ANTES/DESPUÉS ============ -->
+  <div class="slide slide--glow-right" data-act="4">
+    <div class="slide-inner">
+      <h3 class="headline-md reveal text-center" style="margin-bottom:var(--space-xl);">6 años sin réplica</h3>
+      <div class="contrast-box reveal reveal-d1">
+        <div class="contrast-side contrast-before">
+          <div class="contrast-icon">📱</div>
+          <p class="contrast-title">Antes</p>
+          <p class="contrast-desc">
+            Un teléfono personal.<br>
+            150 chats abiertos.<br>
+            11:00 PM. Sin protocolo.
+          </p>
+        </div>
+        <div class="contrast-side contrast-after">
+          <div class="contrast-icon">🌐</div>
+          <p class="contrast-title">Ahora</p>
+          <p class="contrast-desc">
+            Ecosistema integrado.<br>
+            Cada pregunta al lugar correcto.<br>
+            Quien atiende, también está protegido.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SLIDE 14 — TRANSICIÓN A PERSONAS ============ -->
+  <div class="slide slide--glow-right" data-act="4">
+    <div class="slide-inner text-center">
+      <div class="section-separator section-separator--center reveal"></div>
+      <p class="transition-text reveal reveal-d1">Pero un ecosistema no se mide en herramientas.</p>
+      <p class="transition-text reveal reveal-d2" style="margin-top: var(--space-sm);">
+        Se mide en <strong class="accent-text">personas</strong>.
+      </p>
+    </div>
+  </div>
+
+  <!-- ============ SLIDE 15 — ACTO V: RECONOCIMIENTO ============ -->
+  <div class="slide" data-act="5" style="position:relative;">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%, rgba(255,89,0,0.05) 0%, transparent 60%);pointer-events:none;"></div>
+    <div class="slide-inner text-center">
+      <div class="act-label act-label--center reveal">Acto V</div>
+      <p class="body-lg reveal reveal-d1" style="max-width:700px; margin: 0 auto var(--space-2xl);">
+        Hay personas en esta universidad — y fuera de ella — que durante seis años han sido la voz que contesta cuando alguien no sabe a quién acudir.
+      </p>
+      <p class="body-lg reveal reveal-d2" style="max-width:700px; margin: 0 auto var(--space-lg);">
+        Personas que atienden a un alumno angustiado por una calificación a las ocho de la mañana… y coordinan una emergencia médica a las tres de la tarde.
+      </p>
+      <div class="section-separator section-separator--center reveal reveal-d3"></div>
+      <p class="headline-md reveal reveal-d3" style="max-width: 700px; margin: var(--space-lg) auto;">
+        Esto no fue un proyecto de tecnología.<br>
+        <span class="accent-text">Fue un proyecto de confianza.</span>
+      </p>
+    </div>
+  </div>
+
+  <!-- ============ SLIDE 16 — EQUIPOS QUE ELIGIERON ============ -->
+  <div class="slide" data-act="5" style="position:relative;">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%, rgba(255,89,0,0.05) 0%, transparent 60%);pointer-events:none;"></div>
+    <div class="slide-inner text-center">
+      <p class="body-lg reveal" style="max-width:650px; margin: 0 auto var(--space-2xl);">
+        Áreas que no estaban obligadas a trabajar juntas… y eligieron hacerlo.<br>
+        Equipos que decidieron que en la Anáhuac Mayab, <strong class="white-text">nadie se queda sin respuesta</strong>.
+      </p>
+      <p class="body-md reveal reveal-d1" style="max-width:500px; margin: 0 auto;">
+        Eso no se instala. No se compra. No se replica con un software.
+      </p>
+    </div>
+  </div>
+
+  <!-- ============ SLIDE 17 — LA FRASE ============ -->
+  <div class="slide" data-act="5" style="position:relative;">
+    <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 60%, rgba(255,89,0,0.05) 0%, transparent 60%);pointer-events:none;"></div>
+    <div class="slide-inner text-center">
+      <div class="invisible-line reveal"></div>
+      <div class="legacy-quote reveal reveal-d1" style="margin-top: var(--space-2xl);">
+        Hay una línea que conecta a cada persona de esta universidad con alguien dispuesto a responder.
+        <br><br>
+        No se ve. Pero lleva <em>seis años sin romperse</em>.
+      </div>
+      <p class="closing-line reveal reveal-d2">
+        Está hecha de <strong class="accent-text">sesenta personas</strong> que eligieron, cada día durante seis años… no soltar.
+      </p>
+    </div>
+  </div>
+
+  <!-- ============ SLIDE 18 — FINAL ============ -->
+  <div class="slide slide--glow-center" data-act="5">
+    <div class="slide-inner text-center">
+      <div class="reveal">
+        <p class="project-title">La Línea Invisible</p>
+        <p class="project-subtitle" style="margin-top: var(--space-lg);">Atención en Línea · Universidad Anáhuac Mayab · 2020–2026</p>
+      </div>
+      <div class="final-logo reveal reveal-d2" style="margin-top:var(--space-3xl);">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 372.54 50.51" role="img" aria-label="Universidad Anáhuac Mayab"><g fill="#FF5900"><path d="m35.92 38.84-6.34-17.84h3.31v-4.95h-16.56v4.95h3.3l-6.34 17.84h-2.58v4.93h10.75v-4.93h-2.89l1.29-3.84h9.49l1.3 3.88h-2.89v4.93h10.75v-4.97zm-14.54-8.36 3.23-9.48 3.23 9.45z"/><path d="m181.74 38.84-6.34-17.84h3.3v-4.95h-16.55v4.95h3.3l-6.34 17.85h-2.58v4.93h10.75v-4.94h-2.89l1.29-3.84h9.49l1.29 3.88h-2.88v4.93h10.74v-4.97zm-14.54-8.36 3.23-9.48 3.22 9.45z"/><path d="m41.09 38.8h2.74v-17.8h-2.74v-4.95h8.43l12.07 18.95v-14h-2.84v-4.95h10.67v4.95h-2.74v22.77h-5.24l-12.44-19.55v14.58h2.85v5h-10.76z"/><path d="m99.65 38.8h2.73v-17.8h-2.73v-4.95h10.9v4.95h-2.85v6.34h10.78v-6.34h-2.85v-4.95h10.86v4.95h-2.73v17.8h2.73v5h-10.86v-5h2.85v-6.61h-10.78v6.61h2.85v5h-10.9z"/><path d="m131.74 33v-12h-2.66v-4.95h10.92v4.95h-2.84v12.1c0 3.46 2.24 5.85 5.62 5.85s5.65-2.32 5.65-5.85v-12.1h-2.81v-4.95h10.9v4.95h-2.66v12c0 7.17-4.29 11.12-11.08 11.12s-11.04-4.07-11.04-11.12z"/><path d="m185 29.91c0-8.08 6.08-14.23 13.48-14.23 4 0 6.57 1.48 7.67 4.25v-3.88h5v10.14h-4.9c-.83-3.41-3.19-5.31-7.32-5.31-5 0-8.47 4-8.47 9a8.62 8.62 0 0 0 8.66 8.89 8.34 8.34 0 0 0 7.88-5.06l4.89 2.62a14.22 14.22 0 0 1-26.89-6.42z"/><path d="m94.48 38.84-6.34-17.84h3.3v-4.95h-16.55v4.95h3.3l-6.34 17.84h-2.58v4.93h10.73v-4.93h-2.87l1.29-3.84h9.49l1.29 3.88h-2.88v4.93h10.74v-4.97zm-14.54-8.36 3.23-9.48 3.22 9.45z"/><path d="m79.92 13.46 4.42-7.1h6.86l-6.29 7.1z"/><path d="m223.63 38.8h2.73v-17.8h-2.73v-4.95h8.16l8.09 12 8.2-12h8v4.95h-2.73v17.8h2.73v5h-11.08v-5h3.12v-14.62l-8.36 12.26-8.16-12.07v14.43h3.11v5h-11.08z"/><path d="m258.56 38.84h2.58l6.34-17.84h-3.3v-4.95h16.51v4.95h-3.22l6.34 17.85h2.62v4.93h-10.75v-4.94h2.81l-1.29-3.84h-9.49l-1.29 3.88h2.88v4.93h-10.74zm17.12-8.36-3.23-9.48-3.22 9.45z"/><path d="m291.17 38.8h3v-5.8l-7.44-12h-2.47v-4.95h10.82v4.95h-2.62l4.48 7.48 4.45-7.48h-2.47v-4.95h10.74v4.95h-2.66l-7.4 12v5.8h3v5h-11.43z"/><path d="m307.42 38.84h2.58l6.35-17.84h-3.35v-4.95h16.52v4.95h-3.23l6.34 17.85h2.62v4.93h-10.7v-4.94h2.81l-1.29-3.84h-9.5l-1.29 3.88h2.89v4.93h-10.75zm17.13-8.36-3.23-9.48-3.23 9.45z"/><path d="m337.8 38.8h2.73v-17.8h-2.73v-4.95h13.89c6.16 0 9.61 2.78 9.61 7.75a6.08 6.08 0 0 1-3.11 5.58 6.52 6.52 0 0 1 3.64 6.19c0 5.47-3.83 8.2-10 8.2h-14.03zm8-17.92v6.41h6.15c2.85 0 4-1.4 4-3.3s-1.33-3.11-4.1-3.11zm0 11.08v6.95h6.15c2.93 0 4.44-1.33 4.44-3.49s-1.32-3.42-4.66-3.42z"/></g></svg>
+      </div>
+      <p class="reveal reveal-d3" style="font-size:13px;color:var(--text-muted);margin-top:var(--space-3xl);letter-spacing:0.05em;">
+        Semana de Innovación · Anáhuac Mayab · 2026
+      </p>
+    </div>
+  </div>
+
+</div><!-- /deck -->
+
+<!-- ═══════════════════════════════════════════════
+     JAVASCRIPT ENGINE
+     ═══════════════════════════════════════════════ -->
 <script>
 (function() {
   'use strict';
 
-  // ─── IntersectionObserver for reveal animations ───
-  const revealObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-        // Don't unobserve — allows re-triggering if needed
-      }
-    });
-  }, {
-    threshold: 0.15,
-    rootMargin: '0px 0px -60px 0px'
-  });
+  // ——— Core state ———
+  const slides = document.querySelectorAll('.slide');
+  const TOTAL = slides.length;
+  let currentSlide = 0;
+  let isAnimating = false;
+  const TRANSITION_MS = 500;
 
-  document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+  // ——— DOM refs ———
+  const progressBar   = document.getElementById('progressBar');
+  const slideCounter  = document.getElementById('slideCounter');
+  const navDotsWrap   = document.getElementById('navDots');
+  const arrowPrev     = document.getElementById('arrowPrev');
+  const arrowNext     = document.getElementById('arrowNext');
+  const clickPrev     = document.getElementById('clickPrev');
+  const clickNext     = document.getElementById('clickNext');
+  const btnFullscreen = document.getElementById('btnFullscreen');
+  const iconExpand    = document.getElementById('iconExpand');
+  const iconCompress  = document.getElementById('iconCompress');
+  const deckLogo      = document.getElementById('deckLogo');
 
-  // ─── Counter animation ───
+  // ——— Build dots ———
+  for (let i = 0; i < TOTAL; i++) {
+    const dot = document.createElement('button');
+    dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+    dot.setAttribute('aria-label', 'Slide ' + (i + 1));
+    dot.dataset.idx = i;
+    dot.addEventListener('click', () => goTo(i));
+    navDotsWrap.appendChild(dot);
+  }
+  const dots = navDotsWrap.querySelectorAll('.nav-dot');
+
+  // ——— Counter animation ———
   function animateCounter(el) {
     if (el.dataset.animated === 'true') return;
     el.dataset.animated = 'true';
-    
     const target = parseInt(el.dataset.target, 10);
     const separator = el.dataset.separator || '';
     const duration = Math.min(2000, Math.max(800, target * 2));
     const startTime = performance.now();
-    
     function easeOutCubic(t) { return 1 - Math.pow(1 - t, 3); }
-    
     function update(now) {
       const elapsed = now - startTime;
       const progress = Math.min(elapsed / duration, 1);
       const value = Math.round(easeOutCubic(progress) * target);
-      
-      if (separator && value >= 1000) {
-        el.textContent = value.toLocaleString('en-US');
-      } else {
-        el.textContent = value;
-      }
-      
-      if (progress < 1) {
-        requestAnimationFrame(update);
-      }
+      el.textContent = (separator && value >= 1000) ? value.toLocaleString('en-US') : value;
+      if (progress < 1) requestAnimationFrame(update);
     }
-    
     requestAnimationFrame(update);
   }
 
-  const counterObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        animateCounter(entry.target);
-      }
+  function triggerCounters(slideEl) {
+    slideEl.querySelectorAll('.counter').forEach(c => {
+      // Reset counter so it re-animates each time you enter
+      c.dataset.animated = 'false';
+      c.textContent = '0';
+      // Small delay so the reveal has started
+      setTimeout(() => animateCounter(c), 300);
     });
-  }, { threshold: 0.5 });
-
-  document.querySelectorAll('.counter').forEach(el => counterObserver.observe(el));
-
-  // ─── Scroll progress bar ───
-  const progressBar = document.getElementById('scrollProgress');
-  
-  function updateProgress() {
-    const scrollTop = window.scrollY;
-    const docHeight = document.documentElement.scrollHeight - window.innerHeight;
-    const progress = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
-    progressBar.style.width = progress + '%';
   }
 
-  // ─── Navigation visibility & active state ───
-  const nav = document.getElementById('nav');
-  const navLabel = document.getElementById('navLabel');
-  const sections = document.querySelectorAll('.section');
-  const navDots = document.querySelectorAll('.nav-dot');
-  const actNames = ['Acto I', 'Acto II', 'Acto III', 'Acto IV', 'Acto V'];
+  // ——— Update UI ———
+  function updateUI() {
+    // Counter
+    slideCounter.textContent = (currentSlide + 1) + ' / ' + TOTAL;
 
-  function updateNav() {
-    const scrollTop = window.scrollY;
-    
-    // Show nav after scrolling past hero
-    if (scrollTop > window.innerHeight * 0.3) {
-      nav.classList.add('visible');
-    } else {
-      nav.classList.remove('visible');
+    // Progress bar
+    const pct = TOTAL > 1 ? (currentSlide / (TOTAL - 1)) * 100 : 0;
+    progressBar.style.width = pct + '%';
+
+    // Dots
+    dots.forEach((d, i) => d.classList.toggle('active', i === currentSlide));
+
+    // Arrows
+    arrowPrev.classList.toggle('disabled', currentSlide === 0);
+    arrowNext.classList.toggle('disabled', currentSlide === TOTAL - 1);
+
+    // Logo visibility (hide on first slide)
+    deckLogo.classList.toggle('visible', currentSlide > 0);
+  }
+
+  // ——— Navigate ———
+  function goTo(idx) {
+    if (isAnimating || idx === currentSlide || idx < 0 || idx >= TOTAL) return;
+    isAnimating = true;
+
+    const prev = slides[currentSlide];
+    const next = slides[idx];
+    const direction = idx > currentSlide ? 1 : -1;
+
+    // Reset reveal states on target slide
+    next.querySelectorAll('.reveal').forEach(r => r.classList.remove('visible'));
+
+    // Prepare next slide entrance position
+    next.style.transform = 'translateX(' + (direction * 60) + 'px)';
+    next.classList.remove('prev');
+    next.classList.remove('active');
+
+    // Force reflow
+    void next.offsetWidth;
+
+    // Animate out current
+    prev.classList.remove('active');
+    prev.classList.add('prev');
+    prev.style.transform = 'translateX(' + (-direction * 60) + 'px)';
+
+    // Animate in next
+    next.classList.add('active');
+    next.style.transform = '';
+
+    currentSlide = idx;
+    updateUI();
+
+    // Trigger counters on new slide
+    triggerCounters(next);
+
+    setTimeout(() => {
+      isAnimating = false;
+      prev.classList.remove('prev');
+    }, TRANSITION_MS);
+  }
+
+  function next() { goTo(currentSlide + 1); }
+  function prev() { goTo(currentSlide - 1); }
+
+  // ——— Keyboard ———
+  document.addEventListener('keydown', e => {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown') {
+      e.preventDefault(); next();
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp' || e.key === 'PageUp') {
+      e.preventDefault(); prev();
+    } else if (e.key === 'Home') {
+      e.preventDefault(); goTo(0);
+    } else if (e.key === 'End') {
+      e.preventDefault(); goTo(TOTAL - 1);
+    } else if (e.key === 'f' || e.key === 'F') {
+      toggleFullscreen();
     }
-
-    // Active section
-    let currentIdx = 0;
-    sections.forEach((section, i) => {
-      const rect = section.getBoundingClientRect();
-      if (rect.top <= window.innerHeight * 0.5 && rect.bottom > window.innerHeight * 0.3) {
-        currentIdx = i;
-      }
-    });
-
-    navDots.forEach((dot, i) => {
-      dot.classList.toggle('active', i === currentIdx);
-    });
-    navLabel.textContent = actNames[currentIdx] || '';
-  }
-
-  // ─── Nav dot click handlers ───
-  navDots.forEach(dot => {
-    dot.addEventListener('click', () => {
-      const targetId = dot.dataset.section;
-      const target = document.getElementById(targetId);
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth' });
-      }
-    });
+    // Escape is handled natively by Fullscreen API
   });
 
-  // ─── Throttled scroll handler ───
-  let ticking = false;
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      requestAnimationFrame(() => {
-        updateProgress();
-        updateNav();
-        ticking = false;
-      });
-      ticking = true;
+  // ——— Click zones ———
+  clickPrev.addEventListener('click', prev);
+  clickNext.addEventListener('click', next);
+
+  // ——— Arrow buttons ———
+  arrowPrev.addEventListener('click', prev);
+  arrowNext.addEventListener('click', next);
+
+  // ——— Touch / Swipe ———
+  let touchStartX = 0;
+  let touchStartY = 0;
+
+  document.addEventListener('touchstart', e => {
+    touchStartX = e.changedTouches[0].clientX;
+    touchStartY = e.changedTouches[0].clientY;
+  }, { passive: true });
+
+  document.addEventListener('touchend', e => {
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    const dy = e.changedTouches[0].clientY - touchStartY;
+    if (Math.abs(dx) > Math.abs(dy) && Math.abs(dx) > 50) {
+      if (dx < 0) next(); else prev();
     }
   }, { passive: true });
 
-  // Initial calls
-  updateProgress();
-  updateNav();
+  // ——— Mouse wheel (debounced) ———
+  let wheelTimeout = null;
+  document.addEventListener('wheel', e => {
+    if (wheelTimeout) return;
+    const target = e.target.closest('.slide');
+    // Allow natural scroll if slide content overflows
+    if (target && target.scrollHeight > target.clientHeight + 10) {
+      const atTop = target.scrollTop <= 0;
+      const atBottom = target.scrollTop + target.clientHeight >= target.scrollHeight - 2;
+      if (e.deltaY < 0 && !atTop) return;
+      if (e.deltaY > 0 && !atBottom) return;
+    }
+    e.preventDefault();
+    if (e.deltaY > 0) next(); else if (e.deltaY < 0) prev();
+    wheelTimeout = setTimeout(() => { wheelTimeout = null; }, 600);
+  }, { passive: false });
+
+  // ——— Fullscreen ———
+  function toggleFullscreen() {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+      const el = document.documentElement;
+      (el.requestFullscreen || el.webkitRequestFullscreen).call(el);
+    } else {
+      (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+    }
+  }
+
+  btnFullscreen.addEventListener('click', toggleFullscreen);
+
+  function onFullscreenChange() {
+    const isFS = !!(document.fullscreenElement || document.webkitFullscreenElement);
+    iconExpand.style.display = isFS ? 'none' : '';
+    iconCompress.style.display = isFS ? '' : 'none';
+    btnFullscreen.title = isFS ? 'Salir de pantalla completa (Esc)' : 'Pantalla completa (F)';
+  }
+  document.addEventListener('fullscreenchange', onFullscreenChange);
+  document.addEventListener('webkitfullscreenchange', onFullscreenChange);
+
+  // ——— Initial state ———
+  slides[0].classList.add('active');
+  triggerCounters(slides[0]);
+  updateUI();
 
 })();
 </script>
-
 </body>
 </html>
