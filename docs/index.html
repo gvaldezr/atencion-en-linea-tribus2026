@@ -19,7 +19,7 @@
   --bg-surface: #2A2A2A;
   --text-primary: #F5F5F5;
   --text-secondary: #A0A0A0;
-  --text-muted: #666666;
+  --text-muted: #808080;
   --accent: #FF5900;
   --accent-hover: #FF7900;
   --accent-glow: rgba(255, 89, 0, 0.15);
@@ -490,7 +490,7 @@ a { color: var(--accent); text-decoration: none; }
 .contrast-icon { font-size: 2.5rem; margin-bottom: var(--space-md); }
 .contrast-title { font-size: 1.1rem; font-weight: 700; margin-bottom: var(--space-sm); }
 .contrast-desc { font-size: 0.88rem; color: var(--text-secondary); line-height: 1.5; }
-.contrast-before .contrast-title { color: var(--text-muted); }
+.contrast-before .contrast-title { color: var(--text-secondary, #A0A0A0); }
 .contrast-after .contrast-title { color: var(--accent); }
 
 /* ═══════════════════════════════════════════════════
@@ -699,8 +699,8 @@ body:hover .nav-arrow { opacity: 1; }
   z-index: 10;
   cursor: pointer;
 }
-.click-zone--prev { left: 0; width: 35%; }
-.click-zone--next { right: 0; width: 35%; }
+.click-zone--prev { left: 0; width: 25%; }
+.click-zone--next { right: 0; width: 75%; }
 
 /* ═══════════════════════════════════════════════════
    RESPONSIVE
@@ -712,8 +712,8 @@ body:hover .nav-arrow { opacity: 1; }
   .contrast-box { grid-template-columns: 1fr; }
   .contrast-before { border-right: none; border-bottom: 1px solid var(--border); }
   .nav-arrow { display: none; }
-  .click-zone--prev { width: 30%; }
-  .click-zone--next { width: 30%; }
+  .click-zone--prev { width: 20%; }
+  .click-zone--next { width: 80%; }
   .timeline { padding-left: 32px; }
   .timeline::before { left: 7px; }
   .tl-dot { left: -32px; width: 18px; height: 18px; }
@@ -890,7 +890,24 @@ body:hover .nav-arrow { opacity: 1; }
 .slide[data-bg="frase-cierre"]::after { background: linear-gradient(to bottom, rgba(13,13,13,0.4), rgba(13,13,13,0.3) 40%, rgba(13,13,13,0.55)); }
 
 .slide[data-bg="final"]::before { background-image: url(assets/slide19_creditos.jpg); }
-.slide[data-bg="final"]::after { background: linear-gradient(to bottom, rgba(30,15,0,0.15), rgba(13,13,13,0.1) 50%, rgba(13,13,13,0.2)); }
+
+/* SF-1 Fixes: New backgrounds for slides without images */
+
+/* Slide 4 — "¿Qué pasa cuando...?" — empty hallway */
+.slide[data-bg="pregunta"]::before { background-image: url(assets/slide04_pregunta.jpg); }
+.slide[data-bg="pregunta"]::after { background: linear-gradient(rgba(10,15,25,0.75), rgba(15,15,15,0.80)); }
+
+/* Slide 15 — "Se mide en personas" — collaborative hands */
+.slide[data-bg="personas"]::before { background-image: url(assets/slide15_personas.jpg); }
+.slide[data-bg="personas"]::after { background: linear-gradient(rgba(10,10,10,0.70), rgba(10,10,10,0.65)); }
+
+/* Slide 3 — "6,000" — enhanced radial glow (CSS-only) */
+.slide--glow-center:not([data-bg]) .big-number { position: relative; z-index: 1; }
+.slide[data-bg="magnitud"]::before { background: radial-gradient(ellipse at 50% 60%, rgba(255,89,0,0.12) 0%, transparent 50%), radial-gradient(ellipse at 50% 80%, rgba(255,89,0,0.06) 0%, transparent 70%); }
+
+/* Slide 11 — Mapa GLPI — subtle tech grid (CSS-only) */
+.slide[data-bg="red-nacional"]::before { background: radial-gradient(circle at 65% 45%, rgba(255,89,0,0.08) 0%, transparent 40%), radial-gradient(circle at 30% 70%, rgba(67,47,100,0.06) 0%, transparent 50%); }
+
 
 /* Override solid backgrounds for slides with images */
 .slide--bg-primary[data-bg],
@@ -975,7 +992,7 @@ body:hover .nav-arrow { opacity: 1; }
   </div>
 
   <!-- ============ SLIDE 2 — 6,000 ALUMNOS ============ -->
-  <div class="slide slide--glow-center" data-act="1">
+  <div class="slide slide--glow-center" data-bg="magnitud" data-act="1">
     <div class="slide-inner text-center">
       <div class="big-number reveal" aria-label="6,000 alumnos">
         <span class="counter" data-target="6000" data-separator=",">0</span>
@@ -985,7 +1002,7 @@ body:hover .nav-arrow { opacity: 1; }
   </div>
 
   <!-- ============ SLIDE 3 — PREGUNTA RETÓRICA ============ -->
-  <div class="slide slide--glow-center" data-act="1">
+  <div class="slide slide--glow-center" data-bg="pregunta" data-act="1">
     <div class="slide-inner">
       <p class="headline-md reveal" style="max-width:700px;line-height:1.5;">
         ¿Qué pasa cuando <strong class="accent-text">6,000 personas</strong> necesitan respuestas…<br>
@@ -1106,26 +1123,48 @@ body:hover .nav-arrow { opacity: 1; }
   </div>
 
   <!-- ============ SLIDE 10 — GLPI MAPA ============ -->
-  <div class="slide slide--bg-primary" data-act="3">
+  <div class="slide slide--bg-primary" data-bg="red-nacional" data-act="3">
     <div class="slide-inner text-center">
       <h3 class="headline-md reveal" style="margin-bottom:var(--space-lg);">Nacido aquí. Adoptado por la Red.</h3>
       <div class="map-container reveal reveal-d1">
         <div class="mexico-map">
-          <svg viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Mapa de México con Mérida resaltada">
-            <path d="M80 120 L120 80 L180 70 L220 60 L280 50 L340 45 L380 55 L420 70 L450 90 L470 120 L480 150 L490 180 L500 200 L510 230 L500 260 L480 280 L450 300 L420 310 L400 320 L370 310 L340 300 L320 290 L300 280 L270 290 L240 310 L210 320 L180 310 L150 290 L130 270 L110 250 L90 220 L80 190 L75 160 L80 120Z" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/>
-            <path d="M420 200 L450 180 L480 170 L510 175 L520 190 L515 210 L500 225 L480 230 L460 225 L440 215 L420 200Z" fill="rgba(255,89,0,0.08)" stroke="rgba(255,89,0,0.3)" stroke-width="1.5"/>
-            <circle cx="475" cy="195" r="8" fill="#FF5900" opacity="0.9">
-              <animate attributeName="r" values="6;10;6" dur="2s" repeatCount="indefinite"/>
-              <animate attributeName="opacity" values="0.9;0.5;0.9" dur="2s" repeatCount="indefinite"/>
+          <svg viewBox="0 0 600 400" fill="none" xmlns="http://www.w3.org/2000/svg" aria-label="Mapa de México con Mérida resaltada y red Anáhuac">
+            <!-- Mexico mainland -->
+            <path d="M118,52 L132,48 L148,55 L158,62 L175,58 L190,52 L205,48 L222,45 L240,42 L258,38 L275,35 L292,34 L310,35 L325,40 L338,48 L348,58 L355,70 L360,82 L368,95 L378,108 L388,118 L395,130 L398,142 L395,155 L388,168 L380,178 L372,188 L365,198 L358,210 L348,222 L338,232 L325,240 L312,248 L298,255 L285,262 L270,268 L255,272 L238,275 L222,278 L208,282 L195,288 L182,295 L172,305 L165,315 L160,325 L158,335 L162,342 L170,348 L178,350 L188,348 L198,342 L208,335 L218,328 L228,322 L238,318 L248,315 L258,312 L265,308 L272,302 L278,295 L282,288 L285,278 L288,270 L292,262 L298,255" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" fill="none"/>
+            <!-- Baja California peninsula -->
+            <path d="M118,52 L110,58 L102,68 L95,82 L88,98 L82,115 L78,132 L76,148 L75,165 L76,182 L80,198 L85,212 L92,225 L100,235 L108,240 L115,238 L120,232 L122,222 L120,210 L115,198 L112,185 L110,172 L112,158 L118,145 L125,135 L132,128 L138,122 L145,118 L152,115 L160,112 L168,108 L175,102 L178,95 L175,88 L168,82 L160,78 L152,72 L145,65 L138,58 L132,52 L125,50 L118,52" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" fill="none"/>
+            <!-- Yucatan Peninsula -->
+            <path d="M395,242 L405,235 L415,228 L428,222 L440,218 L455,216 L468,218 L478,222 L488,228 L495,235 L498,245 L496,255 L490,265 L482,272 L472,278 L460,282 L448,280 L438,275 L428,268 L418,260 L408,252 L400,248 L395,242" fill="rgba(255,89,0,0.06)" stroke="rgba(255,89,0,0.25)" stroke-width="1.5"/>
+            <!-- Gulf coast to Yucatan -->
+            <path d="M298,255 L308,258 L318,260 L330,262 L342,260 L355,255 L368,248 L378,242 L388,238 L395,242" stroke="rgba(255,255,255,0.12)" stroke-width="1.5" fill="none"/>
+            <!-- Mérida pulsing dot -->
+            <circle cx="468" cy="238" r="8" fill="#FF5900" opacity="0.9">
+              <animate attributeName="r" values="6;12;6" dur="2s" repeatCount="indefinite"/>
+              <animate attributeName="opacity" values="0.9;0.4;0.9" dur="2s" repeatCount="indefinite"/>
             </circle>
-            <circle cx="475" cy="195" r="4" fill="#FF5900"/>
-            <text x="475" y="175" text-anchor="middle" fill="#FF5900" font-family="Inter, sans-serif" font-size="13" font-weight="700">MÉRIDA</text>
-            <line x1="475" y1="195" x2="350" y2="230" stroke="rgba(255,89,0,0.2)" stroke-width="1" stroke-dasharray="4 4"/>
-            <line x1="475" y1="195" x2="300" y2="180" stroke="rgba(255,89,0,0.2)" stroke-width="1" stroke-dasharray="4 4"/>
-            <line x1="475" y1="195" x2="250" y2="250" stroke="rgba(255,89,0,0.2)" stroke-width="1" stroke-dasharray="4 4"/>
-            <circle cx="350" cy="230" r="3" fill="rgba(255,255,255,0.2)"/>
-            <circle cx="300" cy="180" r="3" fill="rgba(255,255,255,0.2)"/>
-            <circle cx="250" cy="250" r="3" fill="rgba(255,255,255,0.2)"/>
+            <circle cx="468" cy="238" r="4" fill="#FF5900"/>
+            <text x="468" y="218" text-anchor="middle" fill="#FF5900" font-family="Inter, sans-serif" font-size="12" font-weight="700" letter-spacing="0.08em">MÉRIDA</text>
+            <!-- Network lines (animated dashes) -->
+            <line x1="468" y1="238" x2="308" y2="258" stroke="rgba(255,89,0,0.15)" stroke-width="1" stroke-dasharray="4 4">
+              <animate attributeName="stroke-dashoffset" values="0;-8" dur="1.5s" repeatCount="indefinite"/>
+            </line>
+            <circle cx="308" cy="258" r="3" fill="rgba(255,255,255,0.25)"/>
+            <text x="308" y="275" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-family="Inter, sans-serif" font-size="9">CDMX</text>
+            <line x1="468" y1="238" x2="282" y2="228" stroke="rgba(255,89,0,0.15)" stroke-width="1" stroke-dasharray="4 4">
+              <animate attributeName="stroke-dashoffset" values="0;-8" dur="1.8s" repeatCount="indefinite"/>
+            </line>
+            <circle cx="282" cy="228" r="3" fill="rgba(255,255,255,0.25)"/>
+            <text x="282" y="245" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-family="Inter, sans-serif" font-size="9">QRO</text>
+            <line x1="468" y1="238" x2="328" y2="268" stroke="rgba(255,89,0,0.15)" stroke-width="1" stroke-dasharray="4 4">
+              <animate attributeName="stroke-dashoffset" values="0;-8" dur="2s" repeatCount="indefinite"/>
+            </line>
+            <circle cx="328" cy="268" r="3" fill="rgba(255,255,255,0.25)"/>
+            <text x="328" y="285" text-anchor="middle" fill="rgba(255,255,255,0.2)" font-family="Inter, sans-serif" font-size="9">PUE</text>
+            <line x1="468" y1="238" x2="498" y2="230" stroke="rgba(255,89,0,0.15)" stroke-width="1" stroke-dasharray="4 4">
+              <animate attributeName="stroke-dashoffset" values="0;-8" dur="1.2s" repeatCount="indefinite"/>
+            </line>
+            <circle cx="498" cy="230" r="3" fill="rgba(255,255,255,0.25)"/>
+            <text x="512" y="225" text-anchor="start" fill="rgba(255,255,255,0.2)" font-family="Inter, sans-serif" font-size="9">CUN</text>
           </svg>
         </div>
         <p class="map-caption"><span class="accent-text">GLPI</span> · Nacido aquí · Adoptado por la Red Anáhuac</p>
@@ -1228,7 +1267,7 @@ body:hover .nav-arrow { opacity: 1; }
   </div>
 
   <!-- ============ SLIDE 14 — TRANSICIÓN A PERSONAS ============ -->
-  <div class="slide slide--glow-right" data-act="4">
+  <div class="slide slide--glow-right" data-bg="personas" data-act="4">
     <div class="slide-inner text-center">
       <div class="section-separator section-separator--center reveal"></div>
       <p class="transition-text reveal reveal-d1">Pero un ecosistema no se mide en herramientas.</p>
@@ -1375,7 +1414,10 @@ body:hover .nav-arrow { opacity: 1; }
   // ——— Update UI ———
   function updateUI() {
     // Counter
-    slideCounter.textContent = (currentSlide + 1) + ' / ' + TOTAL;
+    // Act-based counter instead of numeric "1 / 19"
+    const actNames = { '0': '', '1': 'Acto I', '2': 'Acto II', '3': 'Acto III', '4': 'Acto IV', '5': 'Acto V' };
+    const actId = slides[currentSlide].dataset.act || '0';
+    slideCounter.textContent = actNames[actId] || '';
 
     // Progress bar
     const pct = TOTAL > 1 ? (currentSlide / (TOTAL - 1)) * 100 : 0;

@@ -48,7 +48,7 @@ Esta experiencia web invierte la proporción del brand book estándar de Anáhua
 |-------|-----|-----|
 | `--li-text-primary` | `#F3F3F1` | Texto principal sobre fondo oscuro |
 | `--li-text-secondary` | `#A0A0A0` | Texto secundario, subtítulos, captions |
-| `--li-text-muted` | `#6F6F6F` | Labels, metadata, texto terciario |
+| `--li-text-muted` | `#808080` | Labels, metadata, texto terciario |
 | `--li-text-accent` | `#FF5900` | Texto naranja — nombres propios, datos clave |
 | `--li-text-inverse` | `#0D0D0D` | Texto sobre fondo naranja |
 
@@ -77,10 +77,10 @@ La experiencia web usa fuentes de Google Fonts para zero-dependency deployment.
 #### Font Stack
 
 ```html
-<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
 ```
 
-**Manrope** como fuente única (alternativa oficial aprobada en brand book cuando Sharp-Bold no está disponible). Razón: geométrica, limpia, excelente en tamaños grandes, excelente rendering en pantalla.
+**Inter** como fuente única (alternativa oficial aprobada en brand book cuando Sharp-Bold no está disponible). Razón: geométrica, legible, excelente en tamaños grandes, excelente rendering en pantalla. Mejor soporte de pesos (300–900) que Manrope.
 
 #### Escala Tipográfica
 
@@ -520,7 +520,7 @@ La experiencia web es un **scroll-driven longform** dividido en 5 secciones (act
 |-----------|-------|
 | **Layout** | Flexbox horizontal, centrado, con signos `+` y `=` entre números |
 | **Números** | `font-size: clamp(2rem, 4vw, 3.5rem)`, `font-weight: 800`, color `#FF5900` |
-| **Operadores (+, =)** | `font-size: 2rem`, color `#6F6F6F` |
+| **Operadores (+, =)** | `font-size: 2rem`, color `#808080` |
 | **Labels** | `font-size: --li-font-caption`, color `#A0A0A0` |
 | **Resultado** | El `+60` tiene glow extra: `text-shadow: 0 0 60px rgba(255,89,0,0.3)` |
 | **Animación** | Los números aparecen uno a uno de izquierda a derecha |
@@ -547,7 +547,7 @@ La experiencia web es un **scroll-driven longform** dividido en 5 secciones (act
 | Propiedad | Valor |
 |-----------|-------|
 | **Layout** | Grid 2 columnas en desktop, stack en mobile |
-| **Lado izquierdo** | `background: #0D0D0D`, tono frío, desaturado. Tipografía `color: #6F6F6F`. |
+| **Lado izquierdo** | `background: #0D0D0D`, tono frío, desaturado. Tipografía `color: #808080`. |
 | **Lado derecho** | `background: #1A1A1A` con `border-left: 3px solid #FF5900`. Tipografía `color: #F3F3F1`. Acento naranja. |
 | **Divider** | Línea vertical `3px solid #FF5900` entre ambos lados |
 | **Animación** | Scroll trigger: el lado izquierdo aparece primero (opacity 1), luego el derecho se "ilumina" |
@@ -1048,7 +1048,7 @@ section {
   /* ─── Colores: Texto ─── */
   --li-text-primary:     #F3F3F1;
   --li-text-secondary:   #A0A0A0;
-  --li-text-muted:       #6F6F6F;
+  --li-text-muted:       #808080;
   --li-text-accent:      #FF5900;
   --li-text-inverse:     #0D0D0D;
 
@@ -1059,7 +1059,7 @@ section {
   --li-overlay-gradient: linear-gradient(to bottom, transparent, #0D0D0D);
 
   /* ─── Tipografía ─── */
-  --li-font-family:      'Manrope', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --li-font-family:      'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --li-font-hero:        clamp(3.5rem, 8vw, 7rem);
   --li-font-display:     clamp(2.5rem, 5vw, 4.5rem);
   --li-font-headline:    clamp(1.75rem, 3.5vw, 2.5rem);
@@ -1198,7 +1198,7 @@ body {
 | **HTML** | Semántico (article, section, figure, blockquote) | Accesibilidad, SEO |
 | **CSS** | Custom Properties + vanilla CSS | Zero dependency, máximo rendimiento |
 | **JS** | Vanilla JS (IntersectionObserver, requestAnimationFrame) | Sin frameworks, <10KB minified |
-| **Fonts** | Google Fonts (Manrope) | CDN rápido, sin self-hosting |
+| **Fonts** | Google Fonts (Inter) | CDN rápido, sin self-hosting |
 | **Deployment** | HTML estático (single file o minimal files) | Hosteable en cualquier lado |
 
 ### 8.2 Estructura de Archivos
@@ -1332,7 +1332,7 @@ O usar el distintivo Anáhuac si está disponible como PNG/SVG.
 ## Apéndice A — Checklist de Implementación
 
 - [ ] **Tokens CSS** cargados como primera hoja de estilos
-- [ ] **Google Fonts** Manrope incluido en `<head>`
+- [ ] **Google Fonts** Inter incluido en `<head>`
 - [ ] **Favicon** configurado
 - [ ] **Meta tags** (viewport, charset, description, Open Graph)
 - [ ] **Hero** con imagen o gradiente fallback
