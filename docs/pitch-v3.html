@@ -350,6 +350,43 @@ img, svg { max-width:100%; height:auto; }
   .slide { padding:48px 24px; }
   .eco-node .lbl { font-size:9px; }
 }
+
+/* ── D3 slides 4-5 ── */
+.d3-stage{position:relative;width:100%;margin:10px auto 0}
+#sankeySvg,#mapSvg{display:block;width:100%;overflow:visible}
+.d3-cols{display:flex;justify-content:space-between;font-size:12px;letter-spacing:.16em;color:#C9C6C0;padding:0 4px 6px;font-weight:600}
+.d3badge{position:absolute;right:0;top:-46px;transform:none}
+.d3-ally{position:absolute;right:0;bottom:-6px;border:1.5px dashed rgba(242,169,78,.7);border-radius:999px;padding:5px 14px;font-size:13px;color:#F3F3F1;background:rgba(13,13,13,.6)}
+.d3-ally em{color:#F2A94E;font-style:normal}
+.d3-ally .dot{display:inline-block;width:8px;height:8px;border-radius:50%;border:1.5px dashed #F2A94E;margin-right:8px;vertical-align:middle}
+.d3-tip{position:absolute;pointer-events:none;background:#1A1A1A;border:1px solid #FF5900;color:#F3F3F1;padding:6px 10px;border-radius:8px;font-size:14px;opacity:0;transition:opacity .15s;white-space:nowrap;z-index:5}
+.d3-tip b{color:#F2A94E}
+.sk-node rect{fill:#FF5900;filter:url(#glow)}
+.sk-node.res rect{fill:#F2A94E}
+.sk-node text{fill:#F3F3F1;font-size:14px;font-weight:600}
+.sk-node text tspan.v{fill:#C9C6C0;font-weight:400;font-size:12px}
+.sk-link{fill:none;stroke-opacity:.28;mix-blend-mode:screen;transition:stroke-opacity .2s}
+.sk-link:hover,.sk-link.hl{stroke-opacity:.6}
+.sk-pulse{fill:none;stroke:#FFB37A;stroke-opacity:.55;stroke-dasharray:2 38;animation:skflow 2.4s linear infinite}
+@keyframes skflow{to{stroke-dashoffset:-40}}
+.mx-land{fill:rgba(255,89,0,.07);stroke:rgba(242,169,78,.55);stroke-width:1}
+.mx-arc{fill:none;stroke:url(#arcGrad);stroke-width:2.2;stroke-linecap:round}
+.mx-arc-pulse{fill:none;stroke:#FFD2A8;stroke-width:2;stroke-dasharray:3 60;animation:skflow 2s linear infinite;opacity:.8}
+.mx-city{fill:#F2A94E}
+.mx-merida{fill:#FF5900;filter:url(#glow2)}
+.mx-ring{fill:none;stroke:#FF5900;stroke-width:2;animation:mxring 2s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes mxring{from{transform:scale(1);opacity:.9}to{transform:scale(4);opacity:0}}
+.mx-lbl{fill:#F3F3F1;font-size:14px;font-weight:600;paint-order:stroke;stroke:#0D0D0D;stroke-width:4px}
+.mx-lead{stroke:rgba(243,243,241,.45);stroke-width:1}
+.mx-card rect{fill:rgba(20,20,20,.92);stroke:#FF5900;stroke-width:1.2}
+.mx-card .n{fill:#F3F3F1;font-size:16px;font-weight:700}
+.mx-card .d{fill:#F2A94E;font-size:12px}
+.mx-card path,.mx-card line,.mx-card circle.i{fill:none;stroke:#F2A94E;stroke-width:1.6}
+.map-counter{position:absolute;left:2%;top:6%;font-size:18px;color:#F3F3F1}
+.map-counter b{font-size:44px;color:#FF5900;display:block;line-height:1}
+.map-fallback{list-style:none;columns:2;max-width:520px;margin:20px auto;padding:0;font-size:18px;text-align:left}
+.map-fallback li{margin:6px 0}.map-fallback li::before{content:"";display:inline-block;width:10px;height:10px;border-radius:50%;background:#FF5900;margin-right:10px;box-shadow:0 0 8px #FF5900}
+@media (prefers-reduced-motion:reduce){.sk-pulse,.mx-arc-pulse,.mx-ring{animation:none;display:none}}
 </style>
 </head>
 <body>
@@ -400,88 +437,30 @@ img, svg { max-width:100%; height:auto; }
   </section>
 
   <!-- ═══ SLIDE 4 — ECOSISTEMA + CULTURA ═══ -->
-  <section class="slide bg-warm">
-    <div class="eco-texture"></div>
-    <div class="slide-inner">
-      <div class="eco-stage reveal reveal-d1">
-        <div class="eco-badge">+15<small>ÁREAS</small></div>
-        <svg class="eco-svg" viewBox="0 0 400 400" preserveAspectRatio="xMidYMid meet">
-          <!-- lines from center (200,200) to nodes -->
-          <!-- 11 áreas · ángulos cada ~32.7° desde las 12h -->
-          <line class="eco-line pulse" x1="200" y1="200" x2="200" y2="40"/>   <!-- CAA 0° -->
-          <line class="eco-line pulse" x1="200" y1="200" x2="287" y2="66"/>   <!-- Soporte Técnico 33° -->
-          <line class="eco-line pulse" x1="200" y1="200" x2="345" y2="132"/>  <!-- Tec. Educativa 65° -->
-          <line class="eco-line pulse" x1="200" y1="200" x2="358" y2="222"/>  <!-- Escuelas 98° -->
-          <line class="eco-line pulse" x1="200" y1="200" x2="320" y2="312"/>  <!-- Cert. y Titulación 131° -->
-          <line class="eco-line pulse" x1="200" y1="200" x2="244" y2="366"/>  <!-- Op. Académica 164° -->
-          <line class="eco-line pulse" x1="200" y1="200" x2="152" y2="366"/>  <!-- La Caja 196° -->
-          <line class="eco-line pulse" x1="200" y1="200" x2="66" y2="312"/>   <!-- Becas y Fin. 229° -->
-          <line class="eco-line pulse" x1="200" y1="200" x2="24" y2="222"/>   <!-- Servicios Escolares 262° -->
-          <line class="eco-line pulse" x1="200" y1="200" x2="42" y2="132"/>   <!-- Mayabús 295° -->
-          <line class="eco-line pulse" x1="200" y1="200" x2="113" y2="66"/>   <!-- Mantenimiento 327° -->
-        </svg>
-        <div class="eco-center"><span>LA<br>LÍNEA</span></div>
-        <div class="eco-node" style="left:50%; top:8%;"><span class="dot"></span><span class="lbl">CAA</span></div>
-        <div class="eco-node" style="left:73%; top:14%;"><span class="dot"></span><span class="lbl">Soporte Técnico</span></div>
-        <div class="eco-node" style="left:90%; top:33%;"><span class="dot"></span><span class="lbl">Tecnología<br>Educativa</span></div>
-        <div class="eco-node" style="left:94%; top:56%;"><span class="dot"></span><span class="lbl">Escuelas</span></div>
-        <div class="eco-node" style="left:84%; top:78%;"><span class="dot"></span><span class="lbl">Certificación y<br>Titulación</span></div>
-        <div class="eco-node" style="left:62%; top:92%;"><span class="dot"></span><span class="lbl">Operación<br>Académica</span></div>
-        <div class="eco-node" style="left:38%; top:92%;"><span class="dot"></span><span class="lbl">La Caja</span></div>
-        <div class="eco-node" style="left:16%; top:78%;"><span class="dot"></span><span class="lbl">Becas y<br>Financiamiento</span></div>
-        <div class="eco-node" style="left:6%; top:56%;"><span class="dot"></span><span class="lbl">Servicios<br>Escolares</span></div>
-        <div class="eco-node" style="left:10%; top:33%;"><span class="dot"></span><span class="lbl">Mayabús</span></div>
-        <div class="eco-node" style="left:27%; top:14%;"><span class="dot"></span><span class="lbl">Mantenimiento</span></div>
+  <section class="slide bg-warm" id="s4eco">
+    <div class="slide-inner" style="max-width:1280px">
+      <p class="headline reveal reveal-d1" style="margin:0 auto 6px;">Ninguna pregunta se queda <span class="accent">sin dueño</span>.</p>
+      <div class="d3-stage reveal reveal-d2" id="sankeyStage">
+        <div class="eco-badge d3badge">+15<small>ÁREAS</small></div>
+        <div class="d3-cols"><span>POR DÓNDE ENTRA</span><span>PRIMER NIVEL</span><span>ESPECIALISTAS</span></div>
+        <svg id="sankeySvg" role="img" aria-label="Diagrama de flujo: 143,867 conversaciones; 87% resueltas en primer nivel y 13% canalizadas a especialistas (19,158 escalamientos reales)"></svg>
+        <div class="d3-ally"><span class="dot"></span>Operación Académica · <em>aliado: coordina cargas académicas</em></div>
+        <div class="d3-tip" id="sankeyTip" role="status"></div>
       </div>
-      <div class="eco-caption">
-        <p class="big reveal reveal-d2">Hoy no es un chat. Es un <span class="accent">ecosistema</span>.</p>
-        <p class="big reveal reveal-d3" style="margin-top:18px; color:var(--accent);">Ninguna pregunta se queda sin dueño.</p>
-        <p class="sub reveal reveal-d4">Una cultura de servicio — de una calificación… a una emergencia médica.</p>
-      </div>
+      <p class="sub reveal reveal-d3" style="margin-top:10px">En temporada alta, más de <span class="accent">1 de cada 4</span> conversaciones que llegan a CAA encuentran su dueño en otra área.</p>
     </div>
   </section>
 
   <!-- ═══ SLIDE 5 — HERRAMIENTAS + REFERENTE ═══ -->
-  <section class="slide bg-amber">
-    <div class="slide-inner">
-      <p class="headline reveal reveal-d1" style="max-width:860px; margin:0 auto;">Las herramientas solo sostienen<br>lo que la <span class="accent">cultura</span> ya decidió.</p>
-      <div class="map-stage reveal reveal-d2" style="margin-top:30px;">
-        <svg class="map-svg" viewBox="0 0 400 230" preserveAspectRatio="xMidYMid meet">
-          <defs>
-            <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="0">
-              <stop offset="0%" stop-color="#FF5900"/>
-              <stop offset="100%" stop-color="#F2A94E"/>
-            </linearGradient>
-          </defs>
-          <!-- stylized Mexico dots: Mérida bottom-right (SE) -->
-          <!-- links from Mérida (330,150) to other cities -->
-          <line class="map-link"    x1="330" y1="150" x2="150" y2="70"/>
-          <line class="map-link l2" x1="330" y1="150" x2="120" y2="110"/>
-          <line class="map-link l3" x1="330" y1="150" x2="90"  y2="150"/>
-          <line class="map-link l4" x1="330" y1="150" x2="180" y2="150"/>
-          <line class="map-link l5" x1="330" y1="150" x2="140" y2="40"/>
-          <!-- cities -->
-          <circle class="city" cx="150" cy="70" r="4"/>
-          <circle class="city" cx="120" cy="110" r="4"/>
-          <circle class="city" cx="90"  cy="150" r="4"/>
-          <circle class="city" cx="180" cy="150" r="4"/>
-          <circle class="city" cx="140" cy="40" r="4"/>
-          <!-- Mérida -->
-          <circle class="merida-pulse" cx="330" cy="150" r="6"/>
-          <circle class="city merida" cx="330" cy="150" r="6"/>
-        </svg>
+  <section class="slide bg-amber" id="s5map">
+    <div class="slide-inner" style="max-width:1280px">
+      <p class="headline reveal reveal-d1" style="max-width:900px; margin:0 auto;">Las herramientas solo sostienen<br>lo que la <span class="accent">cultura</span> ya decidió.</p>
+      <div class="d3-stage map-wrap reveal reveal-d2" id="mapStage">
+        <svg id="mapSvg" role="img" aria-label="Mapa de México: GLPI nació en Mérida y se adoptó en 8 sedes"></svg>
+        <div class="map-counter"><b id="mapCount">0</b> sedes adoptaron GLPI</div>
+        <ul class="map-fallback" id="mapFallback" hidden></ul>
       </div>
-      <div class="tools-row reveal reveal-d3">
-        <div class="tool">
-          <svg viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="3"/><circle cx="9" cy="13" r="1.3" fill="var(--gold)" stroke="none"/><circle cx="15" cy="13" r="1.3" fill="var(--gold)" stroke="none"/><line x1="12" y1="3" x2="12" y2="7"/></svg>
-          <div class="tx"><div class="n">LeonEl</div><div class="d">nuestro bot</div></div>
-        </div>
-        <div class="tool">
-          <svg viewBox="0 0 24 24"><path d="M5 4h10l4 4v12H5z"/><polyline points="14,4 14,9 19,9"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="16" x2="14" y2="16"/></svg>
-          <div class="tx"><div class="n">GLPI</div><div class="d">nació en este campus</div></div>
-        </div>
-      </div>
-      <p class="lead reveal reveal-d4" style="margin-top:28px;">De solución local… a <span class="accent">referente nacional</span>.</p>
+      <p class="lead reveal reveal-d3" style="margin-top:8px;">De solución local… a <span class="accent">referente nacional</span>.</p>
     </div>
   </section>
 
@@ -509,7 +488,7 @@ img, svg { max-width:100%; height:auto; }
       <div class="stat-cascade">
         <div class="stat-row reveal reveal-d1"><span class="n">8,500</span> alumnos</div>
         <div class="stat-row reveal reveal-d2"><span class="n">300</span> atenciones al día</div>
-        <div class="stat-row reveal reveal-d3"><span class="n">60</span> personas en primera línea</div>
+        <div class="stat-row reveal reveal-d3"><span class="n">25</span> personas en primera línea</div>
         <div class="stat-row reveal reveal-d4"><span class="n">+15</span> áreas · <span class="n">6</span> años sin pausa</div>
       </div>
       <div class="s7-turn reveal reveal-d6" style="margin-top:44px;">
@@ -527,8 +506,9 @@ img, svg { max-width:100%; height:auto; }
     <div class="people-stage"></div>
     <div class="people-overlay"></div>
     <div class="slide-inner">
-      <div class="people-num reveal reveal-d1">60 personas.</div>
+      <div class="people-num reveal reveal-d1">25 personas.</div>
       <p class="people-sub reveal reveal-d2">La voz que contesta, cada día.</p>
+      <p class="people-sub reveal reveal-d3" style="font-size:clamp(1rem,1.8vw,1.3rem);opacity:.85;margin-top:10px;">Y detrás de ellas, casi <span class="accent">300</span> personas que alguna vez han tomado una conversación.</p>
       <p class="people-areas reveal reveal-d4">CAA · Soporte Técnico · Tecnología Educativa · Mantenimiento · Mayabús · La Caja · Servicios Escolares · Certificación y Titulación · Becas y Financiamiento · Operación Académica · Escuelas</p>
     </div>
   </section>
@@ -694,6 +674,135 @@ img, svg { max-width:100%; height:auto; }
   slides[0].classList.add('active');
   slides[0].querySelectorAll('.reveal').forEach(r=>r.classList.add('force-show'));
   updateUI();
+})();
+</script>
+<script src="https://cdn.jsdelivr.net/npm/d3@7"></script>
+<script src="https://cdn.jsdelivr.net/npm/d3-sankey@0.12"></script>
+<script src="https://cdn.jsdelivr.net/npm/topojson-client@3"></script>
+<script>
+(function(){
+if(!window.d3) return;
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt=d3.format(',');
+const W=()=>Math.min(window.innerWidth*0.9,1240);
+['sankeyStage','mapStage'].forEach(id=>{const el=document.getElementById(id);
+  ['click','mousedown','touchstart','touchend','wheel'].forEach(ev=>el.addEventListener(ev,e=>e.stopPropagation(),{passive:true}));});
+function defs(svg,id,dev){const f=svg.append('defs').append('filter').attr('id',id).attr('x','-50%').attr('y','-50%').attr('width','200%').attr('height','200%');
+  f.append('feGaussianBlur').attr('stdDeviation',dev).attr('result','b');const m=f.append('feMerge');m.append('feMergeNode').attr('in','b');m.append('feMergeNode').attr('in','SourceGraphic');}
+/* ---------- SLIDE 4: SANKEY ---------- */
+let skBuilt=false,skSel=null;
+function buildSankey(){
+  const w=W(),h=Math.max(300,Math.min(window.innerHeight*0.56,560));
+  const svg=d3.select('#sankeySvg').attr('viewBox',`0 0 ${w} ${h}`).attr('height',h);svg.selectAll('*').remove();defs(svg,'glow',3);
+  // Entradas (Soporte = Soporte Técnico 32,196 + Soporte-Alumnos 7,312)
+  const E={CAA:73181,'Soporte Técnico':39508,'Mantenimiento':8758,'Tecnología Educativa':6963,'Mayabús':4935};
+  E['Otras áreas ']=143867-Object.values(E).reduce((a,b)=>a+b,0);
+  // Escalamientos REALES (19,158 origen→destino)
+  const ESC_REAL=[["CAA", "Caja", 3858], ["CAA", "Otras áreas", 2432], ["CAA", "Servicios Escolares", 1966], ["CAA", "Soporte a alumnos", 1747], ["CAA", "Becas y Financiamiento", 2969], ["CAA", "Escuelas", 2859], ["Soporte Técnico", "Otras áreas", 589], ["CAA", "Certificación y Titulación", 533], ["Soporte Técnico", "Caja", 517], ["Tecnología Educativa", "Soporte a alumnos", 391], ["Soporte Técnico", "Becas y Financiamiento", 249], ["Soporte Técnico", "Escuelas", 539], ["Mantenimiento", "Otras áreas", 148], ["Soporte Técnico", "Servicios Escolares", 105], ["Tecnología Educativa", "Otras áreas", 63], ["Mantenimiento", "Soporte a alumnos", 34], ["Mayabús", "Soporte a alumnos", 29], ["Soporte Técnico", "Soporte a alumnos", 24], ["Mayabús", "Caja", 24], ["Mayabús", "Otras áreas", 21], ["Mayabús", "Becas y Financiamiento", 9], ["Otras áreas ", "Otras áreas", 8], ["Tecnología Educativa", "Caja", 5], ["Tecnología Educativa", "Escuelas", 10], ["Otras áreas ", "Becas y Financiamiento", 5], ["Otras áreas ", "Soporte a alumnos", 3], ["Mayabús", "Servicios Escolares", 3], ["Tecnología Educativa", "Becas y Financiamiento", 5], ["Otras áreas ", "Servicios Escolares", 2], ["Mantenimiento", "Becas y Financiamiento", 2], ["Mantenimiento", "Servicios Escolares", 2], ["Mantenimiento", "Caja", 2], ["Soporte Técnico", "Certificación y Titulación", 2], ["Otras áreas ", "Escuelas", 2], ["Mayabús", "Escuelas", 1]];
+  const esc={};Object.keys(E).forEach(k=>esc[k]=0);const spec={};
+  ESC_REAL.forEach(([o,d,v])=>{esc[o]=(esc[o]||0)+v;spec[d]=(spec[d]||0)+v;});
+  const R='Resuelve en primer nivel',C='Canaliza a especialista';
+  const names=[...Object.keys(E),R,C,...Object.keys(spec)];
+  const nodes=names.map(n=>({name:n}));const ix=n=>names.indexOf(n);const links=[];
+  Object.keys(E).forEach(k=>{links.push({source:ix(k),target:ix(R),value:E[k]-esc[k]});links.push({source:ix(k),target:ix(C),value:esc[k]});});
+  Object.entries(spec).forEach(([k,v])=>links.push({source:ix(C),target:ix(k),value:v}));
+  const sk=d3.sankey().nodeWidth(12).nodePadding(Math.max(8,h*0.03)).nodeAlign(d3.sankeyLeft).extent([[4,6],[w-190,h-34]]);
+  const g=sk({nodes:nodes.map(d=>({...d})),links:links.map(d=>({...d}))});
+  const tip=document.getElementById('sankeyTip'),stage=document.getElementById('sankeyStage');
+  const show=(e,html)=>{tip.innerHTML=html;const r=stage.getBoundingClientRect();tip.style.left=(e.clientX-r.left+14)+'px';tip.style.top=(e.clientY-r.top-10)+'px';tip.style.opacity=1;};
+  const hide=()=>tip.style.opacity=0;
+  const col=d=>d.target.name===R?'#F2A94E':'#FF5900';
+  const lk=svg.append('g').selectAll('path').data(g.links).join('path').attr('class','sk-link').attr('d',d3.sankeyLinkHorizontal())
+    .attr('stroke',col).attr('stroke-width',d=>Math.max(1,d.width))
+    .on('mousemove',(e,d)=>show(e,`${d.source.name.trim()} → ${d.target.name.trim()}<br><b>${fmt(d.value)}</b> conversaciones`)).on('mouseleave',hide);
+  const pl=svg.append('g').attr('pointer-events','none').selectAll('path').data(g.links.filter(d=>d.width>3)).join('path').attr('class','sk-pulse').attr('d',d3.sankeyLinkHorizontal()).attr('stroke-width',d=>Math.min(3,d.width/3));
+  const nd=svg.append('g').selectAll('g').data(g.nodes).join('g').attr('class',d=>'sk-node'+(d.name===R?' res':''))
+    .on('mousemove',(e,d)=>{lk.classed('hl',l=>l.source===d||l.target===d);show(e,`${d.name.trim()}<br><b>${fmt(d.value)}</b> (${(d.value/143867*100).toFixed(1)}%)`);})
+    .on('mouseleave',()=>{lk.classed('hl',false);hide();});
+  nd.append('rect').attr('x',d=>d.x0).attr('y',d=>d.y0).attr('width',d=>d.x1-d.x0).attr('height',d=>Math.max(2,d.y1-d.y0)).attr('rx',3);
+  const t=nd.append('text').attr('y',d=>(d.y0+d.y1)/2).attr('dy','0.35em')
+    .attr('x',d=>d.depth===0?d.x1+8:d.x1+8).attr('text-anchor','start');
+  t.append('tspan').text(d=>d.name.trim());
+  t.append('tspan').attr('class','v').attr('dx',6).text(d=>d.name===R||d.name===C?(d.value/143867*100).toFixed(0)+'%':d.depth===0?'':fmt(d.value));
+  t.filter(d=>d.depth===0).attr('x',d=>d.x1+8);
+  skSel={lk,pl,nd};skBuilt=true;
+}
+function playSankey(){
+  if(!skBuilt) buildSankey(); const {lk,pl,nd}=skSel;
+  if(RM){lk.attr('opacity',1);nd.attr('opacity',1);return;}
+  nd.interrupt().attr('opacity',0).transition().delay(d=>200+d.depth*450).duration(500).attr('opacity',1);
+  lk.each(function(){const L=this.getTotalLength();d3.select(this).interrupt().attr('stroke-dasharray',L+' '+L).attr('stroke-dashoffset',L);})
+    .transition().delay(d=>350+d.source.depth*450).duration(900).ease(d3.easeCubicOut).attr('stroke-dashoffset',0).on('end',function(){d3.select(this).attr('stroke-dasharray',null);});
+  pl.interrupt().attr('opacity',0).transition().delay(1800).duration(600).attr('opacity',1);
+}
+/* ---------- SLIDE 5: MAPA ---------- */
+const MER={n:'Mérida',lat:20.97,lon:-89.62};
+const SEDES=[{n:'Cancún',lat:21.16,lon:-86.85,dx:0,dy:-16,a:'middle'},{n:'Oaxaca',lat:17.07,lon:-96.72,dx:0,dy:24,a:'middle'},
+ {n:'Xalapa',lat:19.54,lon:-96.91,dx:46,dy:-34,lead:1},{n:'Querétaro',lat:20.59,lon:-100.39,dx:-12,dy:-14,a:'end'},
+ {n:'Puebla',lat:19.04,lon:-98.21,dx:0,dy:36,a:'middle',lead:1},{n:'Córdoba',lat:18.88,lon:-96.93,dx:48,dy:22,lead:1},
+ {n:'Anáhuac Norte',lat:19.40,lon:-99.27,dx:-60,dy:4,a:'end',lead:1},{n:'SERUA (CDMX)',lat:19.43,lon:-99.13,dx:-56,dy:34,a:'end',lead:1}];
+let mpBuilt=false,mpSel=null,mpFail=false;
+function fallback(){mpFail=true;document.getElementById('mapSvg').style.display='none';const ul=document.getElementById('mapFallback');ul.hidden=false;
+  ul.innerHTML='<li><b style="color:#FF5900">Mérida — nació aquí (LeonEl · GLPI)</b></li>'+SEDES.map(s=>`<li>${s.n}</li>`).join('');document.getElementById('mapCount').textContent=SEDES.length;}
+let mxGeo=null;
+const geoP=(window.topojson?d3.json('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-50m.json'):Promise.reject())
+  .then(t=>{const f=topojson.feature(t,t.objects.countries).features.find(d=>+d.id===484);if(!f)throw 0;mxGeo=f;return f;});
+geoP.catch(()=>{});
+function buildMap(geo){
+  const w=W(),h=Math.max(300,Math.min(window.innerHeight*0.56,560));
+  const svg=d3.select('#mapSvg').attr('viewBox',`0 0 ${w} ${h}`).attr('height',h);svg.selectAll('*').remove();
+  defs(svg,'glow2',4);
+  const gr=svg.select('defs').append('linearGradient').attr('id','arcGrad');gr.append('stop').attr('offset','0').attr('stop-color','#FF5900');gr.append('stop').attr('offset','1').attr('stop-color','#F2A94E');
+  const proj=d3.geoMercator().fitExtent([[w*0.06,10],[w*0.8,h-10]],geo);const path=d3.geoPath(proj);
+  svg.append('path').datum(geo).attr('class','mx-land').attr('d',path);
+  const [mx,my]=proj([MER.lon,MER.lat]);
+  const arcs=svg.append('g'),pul=svg.append('g'),cities=svg.append('g'),labels=svg.append('g');
+  const arcD=s=>{const [x,y]=proj([s.lon,s.lat]);const dx=x-mx,dy=y-my,dist=Math.hypot(dx,dy);const cx=(mx+x)/2+dy*0.18-0,cy=(my+y)/2-dist*0.35;return `M${mx},${my} Q${cx},${cy} ${x},${y}`;};
+  const A=arcs.selectAll('path').data(SEDES).join('path').attr('class','mx-arc').attr('d',arcD);
+  const P=pul.selectAll('path').data(SEDES).join('path').attr('class','mx-arc-pulse').attr('d',arcD);
+  const Cg=cities.selectAll('g').data(SEDES).join('g').attr('transform',s=>`translate(${proj([s.lon,s.lat])})`);
+  Cg.append('circle').attr('class','mx-city').attr('r',4.5);
+  const Lg=labels.selectAll('g').data(SEDES).join('g').attr('transform',s=>`translate(${proj([s.lon,s.lat])})`);
+  Lg.filter(s=>s.lead).append('line').attr('class','mx-lead').attr('x1',0).attr('y1',0).attr('x2',s=>s.dx).attr('y2',s=>s.dy-4);
+  Lg.append('text').attr('class','mx-lbl').attr('x',s=>s.dx+(s.lead?(s.a==='end'?-4:4):0)).attr('y',s=>s.dy).attr('text-anchor',s=>s.a||'start').text(s=>s.n);
+  svg.append('circle').attr('class','mx-ring').attr('cx',mx).attr('cy',my).attr('r',7);
+  svg.append('circle').attr('class','mx-merida').attr('cx',mx).attr('cy',my).attr('r',8);
+  svg.append('text').attr('class','mx-lbl').attr('x',mx).attr('y',my+28).attr('text-anchor','middle').style('font-size','16px').text('Mérida');
+  // tarjetas
+  const cx0=Math.min(w-215,mx+175),cards=svg.append('g');
+  cards.append('line').attr('class','mx-lead').attr('x1',mx+8).attr('y1',my).attr('x2',cx0).attr('y2',my).style('stroke','#FF5900').style('stroke-dasharray','3 3');
+  cards.append('text').attr('class','mx-lbl').attr('x',(mx+cx0)/2).attr('y',my-6).attr('text-anchor','middle').style('font-size','11px').style('fill','#F2A94E').text('nació aquí');
+  const C=[{n:'Rocket.Chat',d:'omnicanal · WhatsApp + web',tag:'LOCAL',y:my-130,ic:'chat'},{n:'LeonEl',d:'bot de atención',tag:'LOCAL',y:my-46,ic:'bot'},{n:'GLPI',d:'mesa de tickets',tag:'ESCALÓ A LA RED →',y:my+38,ic:'doc',hi:1}];
+  const cg=cards.selectAll('g.mx-card').data(C).join('g').attr('class','mx-card').attr('transform',c=>`translate(${cx0},${c.y})`);
+  cg.append('rect').attr('width',200).attr('height',76).attr('rx',12).style('stroke',c=>c.hi?'#FF5900':'rgba(243,243,241,.28)').style('stroke-width',c=>c.hi?2:1);
+  cg.each(function(c){const g=d3.select(this).append('g').attr('transform','translate(14,22) scale(1.2)');
+    if(c.ic==='chat'){g.append('path').attr('d','M4 5h16v11H9l-5 4z');g.append('line').attr('x1',8).attr('y1',10).attr('x2',16).attr('y2',10);}
+    else if(c.ic==='bot'){g.append('path').attr('d','M4 7h16v12H4z');g.append('line').attr('x1',12).attr('y1',3).attr('x2',12).attr('y2',7);g.append('circle').attr('class','i').attr('cx',9).attr('cy',13).attr('r',1.3);g.append('circle').attr('class','i').attr('cx',15).attr('cy',13).attr('r',1.3);}
+    else{g.append('path').attr('d','M5 4h10l4 4v12H5z M14 4v5h5');g.append('line').attr('x1',8).attr('y1',13).attr('x2',16).attr('y2',13);g.append('line').attr('x1',8).attr('y1',16).attr('x2',14).attr('y2',16);}});
+  cg.append('text').attr('class','n').attr('x',58).attr('y',28).text(c=>c.n);
+  cg.append('text').attr('class','d').attr('x',58).attr('y',47).text(c=>c.d);
+  cg.append('text').attr('x',58).attr('y',68).style('font-size','10px').style('font-weight','700').style('letter-spacing','.08em').style('fill',c=>c.hi?'#FF5900':'#9A9A96').text(c=>c.tag);
+  mpSel={A,P,Cg,Lg,cards};mpBuilt=true;
+}
+function playMap(){
+  if(mpFail) return;
+  geoP.then(geo=>{
+    if(!mpBuilt) buildMap(geo); const {A,P,Cg,Lg,cards}=mpSel; const cnt=document.getElementById('mapCount');
+    if(RM){cnt.textContent=SEDES.length;return;}
+    const D=900,step=520;
+    cards.interrupt().attr('opacity',0).transition().delay(300).duration(600).attr('opacity',1);
+    A.each(function(){const L=this.getTotalLength();d3.select(this).interrupt().attr('stroke-dasharray',L+' '+L).attr('stroke-dashoffset',L);})
+     .transition().delay((d,i)=>D+i*step).duration(800).ease(d3.easeCubicInOut).attr('stroke-dashoffset',0);
+    P.interrupt().attr('opacity',0).transition().delay((d,i)=>D+i*step+800).attr('opacity',.8);
+    Cg.interrupt().attr('opacity',0).transition().delay((d,i)=>D+i*step+700).duration(300).attr('opacity',1);
+    Lg.interrupt().attr('opacity',0).transition().delay((d,i)=>D+i*step+750).duration(300).attr('opacity',1);
+    cnt.textContent=0;SEDES.forEach((s,i)=>setTimeout(()=>{if(document.getElementById('s5map').classList.contains('active'))cnt.textContent=i+1;},D+i*step+800));
+  }).catch(fallback);
+}
+/* activación por slide */
+const hooks=[[document.getElementById('s4eco'),playSankey],[document.getElementById('s5map'),playMap]];
+hooks.forEach(([el,fn])=>{let was=false;new MutationObserver(()=>{const now=el.classList.contains('active');if(now&&!was)fn();was=now;}).observe(el,{attributes:true,attributeFilter:['class']});});
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(()=>{skBuilt=false;mpBuilt=false;hooks.forEach(([el,fn])=>{if(el.classList.contains('active'))fn();});},300);});
 })();
 </script>
 </body>
