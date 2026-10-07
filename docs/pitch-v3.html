@@ -445,6 +445,24 @@ img, svg { max-width:100%; height:auto; }
 .proto-step.alt .proto-v{color:var(--gold);}
 .proto-note{margin-top:64px;font-size:clamp(1.15rem,2.2vw,1.6rem);color:var(--text-secondary);}
 @media (prefers-reduced-motion:reduce){.proto-fill{transition:none;}}
+
+/* ═══ Canales → protocolo ═══ */
+.proto-ch{display:grid;grid-template-columns:200px 110px 1fr;align-items:start;margin-top:150px;}
+.ch-col{margin-top:-103px;position:relative;}
+.ch-kick{position:absolute;top:-44px;left:0;font-size:clamp(1rem,1.6vw,1.25rem);font-weight:700;color:var(--gold);letter-spacing:.02em;white-space:nowrap;}
+.ch-kick2{left:0;top:-147px;color:var(--accent);}
+.ch-list{list-style:none;margin:0;padding:0;}
+.ch{height:66px;display:flex;align-items:center;gap:14px;opacity:0;transform:translateX(-14px);transition:opacity .5s ease,transform .5s ease;transition-delay:calc(.25s + var(--i)*.18s);}
+.slide.active .ch{opacity:1;transform:none;}
+.ch-ic{width:50px;height:50px;border-radius:14px;display:grid;place-items:center;border:1.5px solid rgba(255,89,0,.6);background:rgba(255,89,0,.08);}
+.ch-ic svg{width:26px;height:26px;fill:none;stroke:var(--accent);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.ch-n{font-size:clamp(1rem,1.5vw,1.25rem);font-weight:600;color:#EDEAE4;white-space:nowrap;}
+.ch-svg{width:110px;height:264px;margin-top:-103px;overflow:visible;}
+.ch-flow{fill:none;stroke:var(--accent);stroke-width:2;opacity:.75;vector-effect:non-scaling-stroke;stroke-dasharray:160;stroke-dashoffset:160;transition:stroke-dashoffset .9s ease;transition-delay:calc(1s + var(--i)*.12s);}
+.slide.active .ch-flow{stroke-dashoffset:0;}
+.proto-main{position:relative;}
+.proto-ch .proto-track{left:0;right:10%;}
+@media (prefers-reduced-motion:reduce){.ch,.ch-flow{transition:none;}}
 </style>
 </head>
 <body>
@@ -499,15 +517,23 @@ img, svg { max-width:100%; height:auto; }
     <div class="slide-inner" style="max-width:1280px">
       <p class="kicker reveal reveal-d1">El protocolo</p>
       <h2 class="headline reveal reveal-d1" style="margin-bottom:0;">Cada conversación, <span class="accent">el mismo camino</span>.</h2>
-      <div class="proto">
-        <div class="proto-track"><div class="proto-fill"></div></div>
-        <div class="proto-steps">
+      <div class="proto proto-ch">
+        <div class="ch-col">
+          <p class="ch-kick">Muchas puertas.</p>
+          <ul class="ch-list"><li class="ch" style="--i:0"><span class="ch-ic"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg></span><span class="ch-n">App móvil</span></li><li class="ch" style="--i:1"><span class="ch-ic"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="8" x2="22" y2="8"/><path d="M7 12h10v4h-6l-2 2z"/></svg></span><span class="ch-n">Webchat</span></li><li class="ch" style="--i:2"><span class="ch-ic"><svg viewBox="0 0 24 24"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9.5 9.5c0 3 2 5 5 5l1-1.5-2-1-1 1c-1-.5-2-1.5-2.5-2.5l1-1-1-2z"/></svg></span><span class="ch-n">WhatsApp</span></li><li class="ch" style="--i:3"><span class="ch-ic"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 7l10 7 10-7"/></svg></span><span class="ch-n">Email</span></li></ul>
+        </div>
+        <svg class="ch-svg" viewBox="0 0 100 264" preserveAspectRatio="none" aria-hidden="true"><path class="ch-flow" style="--i:0" d="M0 33 C 55 33, 45 132, 100 132"/><path class="ch-flow" style="--i:1" d="M0 99 C 55 99, 45 132, 100 132"/><path class="ch-flow" style="--i:2" d="M0 165 C 55 165, 45 132, 100 132"/><path class="ch-flow" style="--i:3" d="M0 231 C 55 231, 45 132, 100 132"/></svg>
+        <div class="proto-main">
+          <p class="ch-kick ch-kick2">Un solo camino.</p>
+          <div class="proto-track"><div class="proto-fill"></div></div>
+          <div class="proto-steps">
           <div class="proto-step step"><span class="proto-dot"><b>1</b></span><span class="proto-v">Saluda</span><span class="proto-t">Se presenta y escucha</span></div>
           <div class="proto-step step"><span class="proto-dot"><b>2</b></span><span class="proto-v">Verifica</span><span class="proto-t">Confirma quién es</span></div>
           <div class="proto-step step"><span class="proto-dot"><b>3</b></span><span class="proto-v">Soluciona</span><span class="proto-t">Si le corresponde, resuelve</span></div>
           <div class="proto-step step alt"><span class="proto-dot"><b>4</b></span><span class="proto-v">Transfiere</span><span class="proto-t">Si no, al área correcta</span></div>
           <div class="proto-step step"><span class="proto-dot"><b>5</b></span><span class="proto-v">Cierra</span><span class="proto-t">Confirma y se despide</span></div>
         </div>
+      </div>
       </div>
       <p class="proto-note reveal reveal-d3">Nadie suelta una conversación a la mitad.</p>
     </div>

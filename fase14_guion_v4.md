@@ -25,9 +25,9 @@ Base: `fase10_guion_v3_completo.md` (intacto) + análisis fase 13. Video: `fase9
 
 **KARLA:** Nació en dos mil veinte, con el campus cerrado, un WhatsApp y mucha voluntad. Hoy el reto es otro: en un día pico llegan dos mil mensajes, y en primera línea hay veinticinco personas. Las cuentas no dan. Y aun así, nadie se queda sin respuesta.
 
-**[0:57] [▶ S4 · Protocolo]** *[Al entrar: título «Cada conversación, el mismo camino». Un clic por verbo, justo al decirlo: Saluda → Verifica → Soluciona → Transfiere → Cierra. Pausa breve antes de «Siempre.»]*
+**[0:57] [▶ S4 · Protocolo]** *[Al entrar: título «Cada conversación, el mismo camino»; los 4 canales (App móvil · Webchat · WhatsApp · Email) aparecen solos y sus líneas convergen en «Saluda». Sin clic extra. Un clic por verbo, justo al decirlo: Saluda → Verifica → Soluciona → Transfiere → Cierra. Pausa breve antes de «Siempre.»]*
 
-**KARLA:** ¿Cómo? Cada conversación sigue el mismo camino: saluda, verifica, soluciona… y si no le corresponde, la transfiere al área correcta. Y cierra. Siempre.
+**KARLA:** ¿Cómo? Llegue por la app, por el chat de la página, por WhatsApp o por correo, cada conversación sigue el mismo camino: saluda, verifica, soluciona… y si no le corresponde, la transfiere al área correcta. Y cierra. Siempre.
 
 **[1:11] [▶ S5 · Diagrama 87%]** *[Diagrama de escalamiento. Énfasis en **no lo suelta** — es la semilla del cierre. «Soluciona» y «Transfiere» del diagrama retoman los verbos del protocolo.]*
 
@@ -82,11 +82,11 @@ Método: palabras habladas (sin acotaciones; «…» no cuenta) ÷ 130 ppm × 60
 | K1 | KARLA | S1 | 41 | 18.9 | 3 | 0:00 | 0:22 |
 | K2 | KARLA | S2 | 21 | 9.7 | 2 | 0:22 | 0:34 |
 | K3 | KARLA | S3 | 46 | 21.2 | 2 | 0:34 | 0:57 |
-| K4a | KARLA | S4 Protocolo | 24 | 11.1 | 2 | 0:57 | 1:11 |
+| K4a | KARLA | S4 Protocolo + canales | 36 | 16.6 | 2 | 0:57 | 1:16 |
 | K4b | KARLA | S5 Diagrama | 37 | 17.1 | 1 | 1:11 | 1:31 |
 | K5 | KARLA | S6 Mapa | 40 | 18.5 | 1 | 1:31 | 1:51 |
 | K6 | KARLA | S7 | 9 | 4.2 | 1 | 1:51 | 1:56 |
-| **Subtotal Karla** | | | **218** | 100.6 | 11 | 0:00 | **1:56** |
+| **Subtotal Karla** | | | **230** | 106.1 | 11 | 0:00 | **≈2:01** |
 | Transición | — | S7 | — | — | 2 | 1:56 | 1:58 |
 | **Video** | Xóchitl·Freddy·Wendy | S7 | — | — | 75 | 1:58 | 3:13 |
 | Silencio | — | S7 | — | — | 3 | 3:13 | 3:16 |
@@ -96,7 +96,7 @@ Método: palabras habladas (sin acotaciones; «…» no cuenta) ÷ 130 ppm × 60
 | M4 | MEMO | S10 | 43 | 19.8 | 1 | 4:00 | 4:21 |
 | M5 | MEMO | S11 | 30 | 13.8 | 4 | 4:21 | 4:39 |
 | **Subtotal Memo** | | | **158** | 72.9 | 10 | 3:16 | **4:39** (1:23) |
-| **TOTAL** | | | **376 palabras** | 173.5 | 101 | | **4:39** → colchón **0:21** antes de 5:00 |
+| **TOTAL** | | | **388 palabras** | 179.0 | 101 | | **≈4:44** → colchón **≈0:16** antes de 5:00 (tiempos posteriores a S4 se recorren ~5 s) |
 
 > **Actualizado 7 oct (slide del protocolo):** Karla queda en 1:56 y Memo en 1:23. Se quitó «Si no le corresponde, lo escala al área correcta» del bloque del diagrama porque ya lo dice el protocolo. El colchón de 21 s absorbe nervios, ritmo lento en escenario, aplausos y arranque del video. **No lo llenen con texto.**
 
