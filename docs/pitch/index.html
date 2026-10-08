@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>La Línea Invisible</title>
+<meta name="description" content="La Línea Invisible — ecosistema de atención en línea de la Universidad Anáhuac Mayab. Versión v3 del pitch: presente y futuro protagonistas.">
+<style>
+/* ═══════════════ DESIGN TOKENS ═══════════════ */
+:root {
+  --bg-deep: #0D0D0D;
+  --bg-primary: #1A1A1A;
+  --text-primary: #F3F3F1;
+  --text-secondary: #B5B2AC;
+  --text-muted: #8A8781;
+  --accent: #FF5900;
+  --accent-hover: #FF7A2E;
+  --gold: #F2A94E;
+  --gold-deep: #C8761B;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --slide-transition: 0.55s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+html, body {
+  width:100%; height:100%; overflow:hidden; font-size:16px;
+  -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+}
+body {
+  font-family:var(--font); background:var(--bg-deep); color:var(--text-primary);
+  line-height:1.6; cursor:default; -webkit-tap-highlight-color:transparent;
+}
+::selection { background:var(--accent); color:#fff; }
+img, svg { max-width:100%; height:auto; }
+
+/* ═══════════════ SLIDE ENGINE ═══════════════ */
+/* ═══ LIENZO FIJO 1920×1080 escalado (estrategia A) ═══ */
+.viewport{position:fixed;inset:0;background:#000;overflow:hidden}
+.stage{position:absolute;left:50%;top:50%;width:1920px;height:1080px;transform:translate(-50%,-50%) scale(var(--s,1));transform-origin:center center;overflow:hidden;background:var(--bg-deep)}
+.deck { position:absolute; inset:0; overflow:hidden; background:var(--bg-deep); }
+
+.slide {
+  position:absolute; inset:0; width:100%; height:100%;
+  display:flex; flex-direction:column; justify-content:center; align-items:center;
+  padding:72px 96px;
+  opacity:0; visibility:hidden; transform:translateX(50px);
+  transition:opacity var(--slide-transition), transform var(--slide-transition), visibility 0s linear 0.55s;
+  will-change:opacity, transform;
+  overflow:hidden;
+  background:var(--bg-deep);
+}
+.slide.active {
+  opacity:1 !important; visibility:visible !important; transform:translateX(0);
+  transition:opacity var(--slide-transition), transform var(--slide-transition), visibility 0s linear 0s;
+  z-index:2;
+}
+.slide.prev { opacity:0; visibility:hidden; transform:translateX(-50px); }
+
+.slide-inner { max-width:1680px; width:100%; position:relative; z-index:3; text-align:center; }
+
+/* ── Background image layer (::before) + overlay (::after) ── */
+.slide[data-bg]::before {
+  content:''; position:absolute; inset:0; z-index:0;
+  background-size:cover; background-position:center center; background-repeat:no-repeat;
+}
+.slide[data-bg]::after {
+  content:''; position:absolute; inset:0; z-index:1; pointer-events:none;
+}
+.slide[data-bg="portada"]::before { background-image:url(../assets-v3/portada.png); }
+.slide[data-bg="portada"]::after {
+  background:
+    radial-gradient(ellipse at 50% 46%, rgba(13,13,13,0.55) 0%, rgba(13,13,13,0.20) 55%, transparent 72%),
+    linear-gradient(to bottom, rgba(13,13,13,0.50), rgba(13,13,13,0.34) 42%, rgba(13,13,13,0.80));
+}
+.slide[data-bg="cierre"]::before { background-image:url(../assets-v3/cierre_noche.png); }
+.slide[data-bg="cierre"]::after {
+  background:
+    radial-gradient(ellipse 60% 70% at 55% 50%, rgba(13,13,13,0.78) 0%, rgba(13,13,13,0.55) 55%, rgba(13,13,13,0.30) 100%),
+    linear-gradient(to bottom, rgba(13,13,13,0.55), rgba(13,13,13,0.35) 40%, rgba(13,13,13,0.85));
+}
+.slide[data-bg="cierre"] .slide-inner{ text-align:center; display:flex; flex-direction:column; align-items:center; }
+.slide[data-bg="cierre"] .closing-line{ max-width:36ch; font-size:50px; margin:0 auto; text-wrap:balance; }
+
+/* ── Warm living background (no image) ── */
+.bg-warm { background:radial-gradient(ellipse at 50% 60%, rgba(60,32,8,0.55) 0%, rgba(13,13,13,1) 72%); }
+.bg-black { background:var(--bg-deep); }
+.bg-amber { background:radial-gradient(ellipse at 50% 55%, rgba(90,50,12,0.65) 0%, rgba(13,13,13,1) 70%); }
+.bg-gold-climax {
+  background:
+    radial-gradient(ellipse at 50% 38%, rgba(242,169,78,0.28) 0%, transparent 55%),
+    radial-gradient(ellipse at 50% 70%, rgba(200,118,27,0.35) 0%, rgba(13,13,13,1) 75%);
+}
+
+/* bokeh texture overlay for slide 2 */
+.bokeh-layer {
+  position:absolute; inset:0; z-index:0; pointer-events:none;
+  background-image:url(../assets-v3/bokeh.png);
+  background-size:cover; background-position:center;
+  opacity:0.22; filter:saturate(1.1) brightness(0.9);
+  mix-blend-mode:screen;
+}
+/* ecosistema subliminal texture for slide 4 */
+.eco-texture {
+  position:absolute; inset:0; z-index:0; pointer-events:none;
+  background-image:url(../assets-v3/ecosistema_textura.png);
+  background-size:cover; background-position:center;
+  opacity:0.10; filter:blur(6px) brightness(0.6);
+}
+/* creditos subliminal texture for slide 9B */
+.cred-texture {
+  position:absolute; inset:0; z-index:0; pointer-events:none;
+  background-image:url(../assets-v3/creditos_textura.png);
+  background-size:cover; background-position:center;
+  opacity:0.14; filter:blur(3px) brightness(0.5);
+}
+
+/* ═══════════════ REVEAL ANIMATIONS ═══════════════ */
+.reveal { opacity:0; transform:translateY(26px); transition:opacity .7s cubic-bezier(.4,0,.2,1), transform .7s cubic-bezier(.4,0,.2,1); }
+.slide.active .reveal { opacity:1; transform:translateY(0); }
+.slide.active .reveal-d1 { transition-delay:.15s; }
+.slide.active .reveal-d2 { transition-delay:.45s; }
+.slide.active .reveal-d3 { transition-delay:.80s; }
+.slide.active .reveal-d4 { transition-delay:1.20s; }
+.slide.active .reveal-d5 { transition-delay:1.65s; }
+.slide.active .reveal-d6 { transition-delay:2.10s; }
+.slide.active .reveal-d7 { transition-delay:2.55s; }
+/* safety net: never leave a reveal stuck hidden on the active slide */
+.slide.active .reveal.force-show { opacity:1 !important; transform:none !important; }
+
+/* ═══════════════ TYPOGRAPHY ═══════════════ */
+.kicker {
+  font-size:43px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase;
+  color:var(--accent); margin-bottom:32px; display:inline-flex; align-items:center; gap:18px;
+}
+.kicker::before { content:''; width:48px; height:2px; background:var(--accent); display:inline-block; }
+
+.display-title {
+  font-size:120px; font-weight:800; line-height:1.02; letter-spacing:-0.025em;
+  text-shadow:0 2px 24px rgba(0,0,0,0.9), 0 0 60px rgba(0,0,0,0.6);
+}
+.subtitle {
+  font-size:54px; font-weight:500; color:#D8D5CF;
+  letter-spacing:0.02em; margin-top:32px; text-shadow:0 1px 12px rgba(0,0,0,0.85);
+}
+.subtitle-sm {
+  font-size:43px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase;
+  color:#C9A06B; margin-bottom:36px; text-shadow:0 1px 10px rgba(0,0,0,0.8);
+}
+.headline {
+  font-size:76px; font-weight:700; line-height:1.15; letter-spacing:-0.015em;
+}
+.lead {
+  font-size:54px; font-weight:400; line-height:1.4; color:var(--text-secondary);
+}
+.accent { color:var(--accent); }
+.gold { color:var(--gold); }
+.whisper { font-size:43px; color:var(--text-muted); letter-spacing:0.04em; }
+
+/* Big numbers */
+.meganum {
+  font-size:300px; font-weight:900; line-height:0.92; letter-spacing:-0.03em;
+  color:var(--text-primary); text-shadow:0 4px 60px rgba(0,0,0,0.6);
+}
+.meganum.accent { color:var(--accent); }
+.meganum-label { font-size:54px; font-weight:500; color:var(--text-secondary); margin-top:10px; }
+
+/* ═══════════════ SLIDE 2 — cascada ═══════════════ */
+.s2-pre { font-size:56px; font-weight:500; color:#E6E3DD; margin-bottom:40px; }
+.s2-peak { font-size:72px; font-weight:700; margin-top:44px; }
+
+/* ═══════════════ SLIDE 3 — timeline ═══════════════ */
+.timeline-wrap { width:100%; max-width:1500px; margin:0 auto; }
+.timeline-track { position:relative; height:5px; background:rgba(255,255,255,0.12); border-radius:3px; margin:60px 0 28px; }
+.timeline-fill {
+  position:absolute; left:0; top:0; height:100%; width:0;
+  background:linear-gradient(90deg, var(--accent), var(--gold)); border-radius:2px;
+  transition:width 1.6s cubic-bezier(.4,0,.2,1); transition-delay:.4s;
+}
+.slide.active .timeline-fill { width:100%; }
+.timeline-dot { position:absolute; top:50%; transform:translate(-50%,-50%); width:28px; height:28px; border-radius:50%; background:var(--accent); box-shadow:0 0 0 8px rgba(255,89,0,0.18); }
+.timeline-dot.start { left:0; }
+.timeline-dot.end { left:100%; background:var(--gold); box-shadow:0 0 0 5px rgba(242,169,78,0.22); }
+.timeline-labels { display:flex; justify-content:space-between; font-weight:700; font-size:72px; }
+.timeline-labels .end { color:var(--gold); }
+.timeline-origin { font-size:48px; color:var(--text-muted); margin-top:8px; letter-spacing:0.04em; }
+.s3-pivot { margin-top:80px; }
+.s3-pivot .l1 { font-size:56px; color:var(--text-secondary); font-weight:400; }
+.s3-pivot .l2 { font-size:70px; color:var(--accent); font-weight:700; margin-top:16px; }
+
+/* ═══════════════ SLIDE 4 — ecosistema constelación ═══════════════ */
+.eco-stage { position:relative; width:640px; height:640px; margin:0 auto; }
+.eco-svg { position:absolute; inset:0; width:100%; height:100%; z-index:1; }
+.eco-line { stroke:rgba(255,255,255,0.22); stroke-width:1.4; }
+.eco-line.pulse { animation:ecoPulse 2.6s ease-in-out infinite; }
+@keyframes ecoPulse {
+  0%,100% { stroke:rgba(255,255,255,0.18); stroke-width:1.2; }
+  50% { stroke:rgba(255,122,46,0.75); stroke-width:2; }
+}
+.eco-node {
+  position:absolute; transform:translate(-50%,-50%); z-index:2;
+  display:flex; flex-direction:column; align-items:center; gap:6px;
+}
+.eco-node .dot {
+  width:13px; height:13px; border-radius:50%; background:var(--accent);
+  box-shadow:0 0 14px rgba(255,89,0,0.7); animation:nodeGlow 3s ease-in-out infinite;
+}
+@keyframes nodeGlow { 0%,100%{opacity:0.75;} 50%{opacity:1; box-shadow:0 0 20px rgba(255,122,46,0.9);} }
+.eco-node .lbl { font-size:38px; font-weight:600; color:#D8D5CF; white-space:normal; max-width:112px; line-height:1.15; text-align:center; letter-spacing:0.01em; text-shadow:0 1px 6px #000; }
+.eco-center {
+  position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); z-index:3;
+  width:120px; height:120px; border-radius:50%;
+  display:flex; align-items:center; justify-content:center; text-align:center;
+  background:radial-gradient(circle, rgba(255,89,0,0.22), rgba(255,89,0,0.04) 70%);
+  border:1.5px solid rgba(255,89,0,0.5);
+}
+.eco-center span { font-size:40px; font-weight:800; color:var(--accent); line-height:1.2; }
+.eco-caption { margin-top:12px; }
+.eco-caption .big { font-size:60px; font-weight:700; }
+.eco-caption .sub { font-size:43px; color:var(--text-secondary); margin-top:8px; }
+.eco-badge { position:absolute; top:4%; right:6%; z-index:4; font-size:76px; font-weight:900; color:var(--accent); }
+.eco-badge small { display:block; font-size:0.4em; font-weight:600; color:var(--text-secondary); letter-spacing:0.1em; }
+
+/* ═══════════════ SLIDE 5 & 8 — mapa ═══════════════ */
+.map-stage { position:relative; width:1500px; margin:0 auto; }
+.map-svg { width:100%; height:auto; }
+.city { fill:#fff; opacity:0.55; }
+.city.merida { fill:var(--accent); opacity:1; }
+.merida-pulse { fill:none; stroke:var(--accent); stroke-width:2; opacity:0; transform-origin:center; }
+.slide.active .merida-pulse { animation:meridaPing 2.4s ease-out infinite; }
+@keyframes meridaPing { 0%{opacity:0.7; r:6;} 100%{opacity:0; r:34;} }
+.map-link { stroke:url(#goldGrad); stroke-width:1.5; opacity:0; stroke-dasharray:6 4; }
+.slide.active .map-link { animation:linkIn 1.2s ease forwards; }
+.slide.active .map-link.l2 { animation-delay:.3s; }
+.slide.active .map-link.l3 { animation-delay:.5s; }
+.slide.active .map-link.l4 { animation-delay:.7s; }
+.slide.active .map-link.l5 { animation-delay:.9s; }
+@keyframes linkIn { to { opacity:0.8; } }
+.tools-row { display:flex; gap:40px; justify-content:center; margin-top:36px; }
+.tool { display:flex; align-items:center; gap:12px; }
+.tool svg { width:34px; height:34px; stroke:var(--gold); fill:none; stroke-width:1.6; }
+.tool .tx { text-align:left; }
+.tool .tx .n { font-size:46px; font-weight:700; color:#E6E3DD; }
+.tool .tx .d { font-size:43px; color:var(--text-muted); }
+
+/* ═══════════════ SLIDE 6 — video placeholder ═══════════════ */
+.video-frame {
+  position:relative; width:1400px; aspect-ratio:16/9; margin:0 auto;
+  background:#060606; border:1px dashed rgba(255,89,0,0.35); border-radius:8px;
+  display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px;
+}
+.video-frame .play {
+  width:140px; height:140px; border-radius:50%; border:3px solid rgba(255,89,0,0.6);
+  display:flex; align-items:center; justify-content:center;
+}
+.video-frame .play svg { width:60px; height:60px; }
+.video-frame .ph-title { font-size:54px; font-weight:700; color:#E6E3DD; }
+.video-frame .ph-meta { font-size:43px; color:var(--text-muted); letter-spacing:0.03em; text-align:center; line-height:1.7; }
+.video-bridge { margin-bottom:32px; font-size:56px; font-weight:400; color:#D8D5CF; letter-spacing:0.03em; }
+
+/* ═══════════════ SLIDE 7 — datos cascada ═══════════════ */
+.stat-cascade { display:flex; flex-direction:column; gap:22px; align-items:center; }
+.stat-row { font-size:80px; font-weight:800; letter-spacing:-0.01em; }
+.stat-row .n { color:var(--accent); }
+.s7-turn { margin-top:12px; }
+.s7-turn .a { font-size:56px; font-weight:500; color:var(--text-secondary); }
+.s7-turn .b { font-size:110px; font-weight:800; color:var(--accent); margin-top:16px; }
+
+/* ═══════════════ SLIDE 8 — futuro ═══════════════ */
+.future-steps { display:flex; flex-direction:column; gap:44px; max-width:1500px; margin:56px auto 0; text-align:left; }
+
+/* ═══════════════ SLIDE 8 — personas ═══════════════ */
+.people-stage {
+  position:absolute; inset:0; z-index:0;
+  background-image:url('../assets-v3/personas_caa.png');
+  background-size:cover; background-position:center;
+}
+.people-overlay {
+  position:absolute; inset:0; z-index:1;
+  background:linear-gradient(180deg, rgba(13,10,5,0.78) 0%, rgba(40,22,5,0.55) 45%, rgba(13,10,5,0.82) 100%);
+}
+.people-num {
+  font-size:240px; font-weight:900; color:#fff; line-height:1;
+  text-shadow:0 4px 30px rgba(0,0,0,0.85);
+}
+.people-sub {
+  margin-top:20px; font-size:72px; font-weight:700; color:var(--accent);
+  text-shadow:0 2px 20px rgba(0,0,0,0.9);
+}
+.people-areas {
+  margin-top:34px; font-size:46px; font-weight:500;
+  color:rgba(255,255,255,0.82); letter-spacing:0.02em; line-height:1.5; max-width:1500px;
+  margin-left:auto; margin-right:auto; text-shadow:0 1px 10px rgba(0,0,0,0.9);
+}
+.future-step { display:flex; gap:36px; align-items:baseline; }
+.future-step .num {
+  flex:none; font-size:84px; font-weight:900; line-height:1.05;
+  background:linear-gradient(135deg, var(--accent), var(--gold)); -webkit-background-clip:text; background-clip:text; color:transparent;
+  min-width:120px;
+}
+.future-step .txt { font-size:66px; font-weight:500; line-height:1.2; color:#EDEAE4; }
+.future-step .txt b { color:var(--gold); font-weight:700; }
+
+/* ═══════════════ SLIDE 9 — cierre ═══════════════ */
+.closing-line { font-size:50px; font-weight:400; line-height:1.35; color:#EDEAE4; text-shadow:0 2px 24px rgba(0,0,0,0.9); max-width:1500px; }
+.no-soltar { font-size:124px; font-weight:800; letter-spacing:-0.02em; margin-top:24px; line-height:1.1; text-shadow:0 2px 40px rgba(0,0,0,0.85); }
+.closing-logo-wrap { }
+.cl-title { font-size:84px; line-height:1.1; font-weight:800; letter-spacing:-0.02em; }
+.cl-sub { font-size:43px; color:var(--text-secondary); letter-spacing:0.03em; margin-top:18px; }
+.cl-rule { width:200px; height:2px; background:var(--accent); margin:22px auto 0; }
+
+/* ─── Easter egg: QR discreto en esquina (slide 9) ─── */
+.egg {
+  position:absolute; bottom:26px; right:26px; z-index:6;
+  display:flex; flex-direction:column; align-items:center; gap:7px;
+  opacity:0; transform:translateY(10px);
+  transition:opacity 1.4s ease, transform 1.4s ease;
+  pointer-events:auto; text-decoration:none;
+}
+.slide.active .egg { opacity:0.42; transform:translateY(0); transition-delay:3.4s; }
+.egg:hover { opacity:1 !important; transition-delay:0s; transform:translateY(-2px); }
+.egg .egg-qr {
+  width:74px; height:74px; padding:6px; border-radius:10px;
+  background:#fff; box-shadow:0 4px 18px rgba(0,0,0,0.5);
+  display:block;
+}
+.egg .egg-hint {
+  font-size:10px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase;
+  color:var(--text-muted); white-space:nowrap;
+}
+.egg:hover .egg-hint { color:var(--accent); }
+
+/* ═══════════════ CHROME: counter, arrows, progress ═══════════════ */
+.hud { position:absolute; z-index:50; pointer-events:none; }
+.slide-counter { bottom:30px; right:40px; font-size:22px; font-weight:600; letter-spacing:0.15em; color:var(--text-muted); opacity:.55; }
+.progress-track { top:0; left:0; width:100%; height:4px; background:rgba(255,255,255,0.06); }
+.progress-bar { height:100%; width:0; background:linear-gradient(90deg,var(--accent),var(--gold)); transition:width .5s ease; }
+.arrows { bottom:24px; left:40px; display:flex; gap:14px; pointer-events:auto; opacity:.35; transition:opacity .2s; }
+.arrows:hover { opacity:1; }
+.arrow-btn {
+  width:48px; height:48px; border-radius:50%; border:1px solid rgba(255,255,255,0.14);
+  background:rgba(255,255,255,0.03); color:var(--text-secondary); cursor:pointer;
+  display:flex; align-items:center; justify-content:center; transition:all .2s; font-size:24px;
+}
+.arrow-btn:hover { border-color:var(--accent); color:var(--accent); }
+.arrow-btn.disabled { opacity:0.25; pointer-events:none; }
+.fs-btn {
+  top:24px; right:40px; width:44px; height:44px; border-radius:8px; opacity:.3; font-size:20px; border:1px solid rgba(255,255,255,0.12);
+  background:rgba(255,255,255,0.03); color:var(--text-secondary); cursor:pointer; pointer-events:auto;
+  display:flex; align-items:center; justify-content:center; transition:all .2s;
+}
+.fs-btn:hover { border-color:var(--accent); color:var(--accent); opacity:1; }
+
+
+/* ── D3 slides 4-5 ── */
+.d3-stage{position:relative;width:100%;margin:10px auto 0}
+#sankeySvg,#mapSvg{display:block;width:100%;overflow:visible}
+.d3-cols{display:flex;justify-content:space-between;font-size:40px;letter-spacing:.16em;color:#C9C6C0;padding:0 4px 6px;font-weight:600}
+.d3badge{position:absolute;right:0;top:-46px;transform:none}
+.d3-tip{position:absolute;pointer-events:none;background:#1A1A1A;border:1px solid #FF5900;color:#F3F3F1;padding:12px 20px;border-radius:12px;font-size:40px;line-height:1.25;opacity:0;transition:opacity .15s;white-space:nowrap;z-index:5}
+.d3-tip b{color:#F2A94E}
+.sk-node rect{fill:#FF5900;filter:url(#glow)}
+.sk-node.res rect{fill:#F2A94E}
+.sk-node text{fill:#F3F3F1;font-size:38px;font-weight:600}
+.sk-node text tspan.v{fill:#C9C6C0;font-weight:400;font-size:40px}
+.sk-link{fill:none;stroke-opacity:.28;mix-blend-mode:screen;transition:stroke-opacity .2s}
+.sk-link:hover,.sk-link.hl{stroke-opacity:.6}
+.sk-pulse{fill:none;stroke:#FFB37A;stroke-opacity:.55;stroke-dasharray:2 38;animation:skflow 2.4s linear infinite}
+@keyframes skflow{to{stroke-dashoffset:-40}}
+.mx-land{fill:rgba(255,89,0,.07);stroke:rgba(242,169,78,.55);stroke-width:1.6}
+.mx-arc{fill:none;stroke:url(#arcGrad);stroke-width:4;stroke-linecap:round}
+.mx-arc-pulse{fill:none;stroke:#FFD2A8;stroke-width:3.5;stroke-dasharray:3 60;animation:skflow 2s linear infinite;opacity:.8}
+.mx-city{fill:#F2A94E}
+.mx-merida{fill:#FF5900;filter:url(#glow2)}
+.mx-ring{fill:none;stroke:#FF5900;stroke-width:3;animation:mxring 2s ease-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes mxring{from{transform:scale(1);opacity:.9}to{transform:scale(4);opacity:0}}
+.mx-lbl{fill:#F3F3F1;font-size:40px;font-weight:600;paint-order:stroke;stroke:#0D0D0D;stroke-width:8px;stroke-linejoin:round}
+.mx-lead{stroke:rgba(243,243,241,.6);stroke-width:2}
+.mx-card rect{fill:rgba(20,20,20,.92);stroke:#FF5900;stroke-width:1.2}
+.mx-card .n{fill:#F3F3F1;font-size:46px;font-weight:700}
+.mx-card .d{fill:#F2A94E;font-size:38px}
+.mx-card path,.mx-card line,.mx-card circle.i{fill:none;stroke:#F2A94E;stroke-width:1.8}
+.map-counter{position:absolute;left:0;top:0;font-size:43px;color:#F3F3F1}
+.map-counter b{font-size:260px;color:#FF5900;display:block;line-height:1}
+.map-fallback{list-style:none;columns:2;max-width:1200px;margin:20px auto;padding:0;font-size:46px;text-align:left}
+.map-fallback li{margin:10px 0}.map-fallback li::before{content:"";display:inline-block;width:20px;height:20px;border-radius:50%;background:#FF5900;margin-right:10px;box-shadow:0 0 8px #FF5900}
+@media (prefers-reduced-motion:reduce){.sk-pulse,.mx-arc-pulse,.mx-ring{animation:none;display:none}}
+
+/* ═══ Rediseño slides 4–5: legibilidad de auditorio ═══ */
+#s4eco .s4-grid{display:grid;grid-template-columns:460px 1fr;gap:28px;align-items:center;margin-top:36px}
+#s4eco .s4-hero{text-align:left}
+#s4eco .s4-big{font-size:250px;font-weight:900;line-height:.9;color:#F2A94E;letter-spacing:-.03em}
+#s4eco .s4-big-txt{font-size:56px;font-weight:700;color:#F3F3F1;line-height:1.12;margin-top:12px}
+#s4eco .s4-sec{margin-top:30px;font-size:54px;color:#D6D3CD;line-height:1.2}
+#s4eco .s4-sec b{color:#FF5900;font-size:1em;font-weight:800;margin-right:4px}
+#s4eco .sk-node text,#s4eco .sk-lbl{font-size:38px;font-weight:700;fill:#F3F3F1;paint-order:stroke;stroke:#0D0D0D;stroke-width:8px;stroke-linejoin:round}
+#s4eco .sk-lbl tspan.v{fill:#F2A94E;font-size:43px;font-weight:800}
+#s4eco .sk-link{stroke-opacity:.38}
+#s4eco .d3badge{position:static;margin-top:34px;line-height:1}
+#s4eco .d3badge small{font-size:43px;letter-spacing:.08em;margin-top:6px}
+#s5map .map-counter{left:0;top:10px;display:flex;flex-direction:column;align-items:flex-start;font-size:43px;font-weight:700;color:#F3F3F1;line-height:1.2;text-align:left;pointer-events:none}
+#s5map .map-counter b{font-size:260px;font-weight:900;line-height:.85;color:#FF5900;margin-bottom:12px}
+#s5map .mx-lbl{font-size:40px;font-weight:700}
+#s5map .mx-card rect{fill:rgba(20,20,20,.9);stroke:rgba(243,243,241,.35);stroke-width:2}
+#s5map .mx-card.hi rect{stroke:#FF5900;stroke-width:3.5}
+#s5map .mx-card path,#s5map .mx-card line,#s5map .mx-card circle.i{stroke:#9A9A96}
+#s5map .mx-card.hi path,#s5map .mx-card.hi line,#s5map .mx-card.hi circle.i{stroke:#FF5900}
+#s5map .mx-card .n{font-size:46px;font-weight:700;fill:#F3F3F1}
+#s5map .mx-card .tg{font-size:38px;font-weight:800;letter-spacing:.04em;fill:#B4B1AB}
+#s5map .mx-card.hi .tg{fill:#FF7A33}
+.slide.active{opacity:1!important;visibility:visible!important}
+@media (prefers-reduced-motion:reduce){#s4eco .sk-link,#s4eco .sk-node,#s5map .mx-cards{opacity:1!important}}
+
+/* Pasos por clic (cierre) */
+.slide .step{opacity:0!important;transform:translateY(14px);transition:opacity .7s ease,transform .7s ease;}
+.slide .step.on{opacity:1!important;transform:none;}
+@media (prefers-reduced-motion:reduce){.slide .step{transition:none;}}
+
+/* QR cierre: más grande y lejos del contador */
+.slide .egg{ left:72px !important; right:auto !important; bottom:112px !important; opacity:.8; }
+.slide .egg .egg-qr{ width:220px !important; height:220px !important; padding:12px; border-radius:14px; image-rendering:pixelated; }
+.slide .egg .egg-hint{ font-size:43px; }
+
+/* ═══ Slide protocolo ═══ */
+.proto{position:relative;width:100%;margin:90px auto 0;}
+.proto-track{position:absolute;left:10%;right:10%;top:44px;height:4px;background:rgba(255,255,255,.12);border-radius:2px;}
+.proto-fill{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--gold));border-radius:2px;box-shadow:0 0 14px rgba(255,89,0,.55);transition:width 1.4s cubic-bezier(.4,0,.2,1) .3s;}
+.slide.active .proto-fill{width:100%;}
+.proto-steps{position:relative;display:grid;grid-template-columns:repeat(5,auto);justify-content:space-between;gap:20px;}
+.proto-step{display:flex;flex-direction:column;align-items:flex-start;text-align:left;}
+.proto-dot{width:92px;height:92px;border-radius:50%;display:grid;place-items:center;background:#1A1A1A;border:3px solid var(--accent);box-shadow:0 0 0 11px rgba(255,89,0,.14),0 0 40px rgba(255,89,0,.45);position:relative;z-index:1;}
+.proto-dot b{font-size:40px;font-weight:800;color:var(--accent);}
+.proto-v{margin-top:30px;font-size:56px;font-weight:800;letter-spacing:-.015em;line-height:1.1;white-space:nowrap;color:#F3F3F1;}
+.proto-t{margin-top:10px;font-size:43px;color:#C9C6C0;line-height:1.3;max-width:16ch;}
+.proto-step.alt .proto-dot{border-style:dashed;}
+.proto-step.alt .proto-v{color:var(--gold);}
+.proto-note{margin-top:72px;font-size:56px;color:var(--text-secondary);}
+@media (prefers-reduced-motion:reduce){.proto-fill{transition:none;}}
+
+/* ═══ Canales → protocolo ═══ */
+.proto-ch{display:grid;grid-template-columns:300px 120px 1fr;align-items:start;margin-top:270px;}
+.ch-col{margin-top:-166px;position:relative;text-align:left;}
+.ch-kick{position:absolute;top:-70px;left:0;font-size:48px;line-height:1.1;font-weight:700;color:var(--gold);letter-spacing:.02em;white-space:nowrap;}
+.ch-kick2{left:0;top:-236px;color:var(--accent);}
+.ch-list{list-style:none;margin:0;padding:0;}
+.ch{height:106px;display:flex;align-items:center;gap:16px;opacity:0;transform:translateX(-22px);transition:opacity .5s ease,transform .5s ease;transition-delay:calc(.25s + var(--i)*.18s);}
+.slide.active .ch{opacity:1;transform:none;}
+.ch-ic{flex:none;width:64px;height:64px;border-radius:18px;display:grid;place-items:center;border:2px solid rgba(255,89,0,.6);background:rgba(255,89,0,.08);}
+.ch-ic svg{width:36px;height:36px;fill:none;stroke:var(--accent);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round;}
+.ch-n{font-size:44px;font-weight:600;color:#EDEAE4;white-space:nowrap;}
+.ch-svg{width:120px;height:424px;margin-top:-166px;overflow:visible;}
+.ch-flow{fill:none;stroke:var(--accent);stroke-width:3.5;opacity:.8;vector-effect:non-scaling-stroke;stroke-dasharray:260;stroke-dashoffset:260;transition:stroke-dashoffset .9s ease;transition-delay:calc(1s + var(--i)*.12s);}
+.slide.active .ch-flow{stroke-dashoffset:0;}
+.proto-main{position:relative;}
+.proto-ch .proto-track{left:0;right:140px;}
+@media (prefers-reduced-motion:reduce){.ch,.ch-flow{transition:none;}}
+</style>
+</head>
+<body>
+<div class="viewport"><div class="stage" id="stage">
+<div class="deck" id="deck">
+
+  <!-- ═══ SLIDE 1 — PORTADA ═══ -->
+  <section class="slide" data-bg="portada">
+    <div class="slide-inner">
+      <p class="subtitle-sm reveal reveal-d1">Semana de Innovación · Anáhuac Mayab · 2026</p>
+      <h1 class="display-title reveal reveal-d2">Algo invisible sostiene<br>esta universidad.</h1>
+      <p class="subtitle reveal reveal-d3">Ecosistema de Atención en Línea</p>
+    </div>
+  </section>
+
+  <!-- ═══ SLIDE 2 — EL HOY: 300/día ═══ -->
+  <section class="slide bg-warm">
+    <div class="bokeh-layer"></div>
+    <div class="slide-inner">
+      <p class="s2-pre reveal reveal-d1">Ahora mismo, alguien está escribiendo.</p>
+      <div class="meganum reveal reveal-d2">300</div>
+      <div class="meganum-label reveal reveal-d2">atenciones cada día</div>
+      <p class="s2-pre reveal reveal-d3" style="margin:36px 0 0; color:var(--accent); font-weight:700;">hasta 2,000 en días de carga académica</p>
+      <p class="s2-peak reveal reveal-d4">Esto es la Línea <span class="accent">Invisible</span>.</p>
+    </div>
+  </section>
+
+  <!-- ═══ SLIDE 3 — ORIGEN 2020→hoy ═══ -->
+  <section class="slide bg-black">
+    <div class="slide-inner">
+      <p class="kicker reveal reveal-d1">El origen</p>
+      <div class="timeline-wrap reveal reveal-d2">
+        <div class="timeline-track">
+          <div class="timeline-fill"></div>
+          <span class="timeline-dot start"></span>
+          <span class="timeline-dot end"></span>
+        </div>
+        <div class="timeline-labels">
+          <span>2020</span>
+          <span class="end">hoy</span>
+        </div>
+        <p class="timeline-origin">6,000 alumnos · un WhatsApp · mucha voluntad</p>
+      </div>
+      <div class="s3-pivot reveal reveal-d4">
+        <p class="l1">No vengo a contarles esa historia otra vez.</p>
+        <p class="l2">Vengo a contarles lo que esa semilla es hoy.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SLIDE 4 — EL PROTOCOLO (la línea, hecha método) ═══ -->
+  <section class="slide bg-black" id="sProto">
+    <div class="slide-inner">
+      <h2 class="headline reveal reveal-d1" style="margin-bottom:0;">Cada conversación, <span class="accent">el mismo camino</span>.</h2>
+      <div class="proto proto-ch">
+        <div class="ch-col">
+          <p class="ch-kick">Muchas puertas.</p>
+          <ul class="ch-list"><li class="ch" style="--i:0"><span class="ch-ic"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="2"/><line x1="11" y1="18" x2="13" y2="18"/></svg></span><span class="ch-n">App móvil</span></li><li class="ch" style="--i:1"><span class="ch-ic"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="2" y1="8" x2="22" y2="8"/><path d="M7 12h10v4h-6l-2 2z"/></svg></span><span class="ch-n">Webchat</span></li><li class="ch" style="--i:2"><span class="ch-ic"><svg viewBox="0 0 24 24"><path d="M4 20l1.3-3.9A8 8 0 1 1 8 19z"/><path d="M9.5 9.5c0 3 2 5 5 5l1-1.5-2-1-1 1c-1-.5-2-1.5-2.5-2.5l1-1-1-2z"/></svg></span><span class="ch-n">WhatsApp</span></li><li class="ch" style="--i:3"><span class="ch-ic"><svg viewBox="0 0 24 24"><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 7l10 7 10-7"/></svg></span><span class="ch-n">Email</span></li></ul>
+        </div>
+        <svg class="ch-svg" viewBox="0 0 100 424" preserveAspectRatio="none" aria-hidden="true"><path class="ch-flow" style="--i:0" d="M0 53 C 55 53, 45 212, 100 212"/><path class="ch-flow" style="--i:1" d="M0 159 C 55 159, 45 212, 100 212"/><path class="ch-flow" style="--i:2" d="M0 265 C 55 265, 45 212, 100 212"/><path class="ch-flow" style="--i:3" d="M0 371 C 55 371, 45 212, 100 212"/></svg>
+        <div class="proto-main">
+          <p class="ch-kick ch-kick2">Un solo camino.</p>
+          <div class="proto-track"><div class="proto-fill"></div></div>
+          <div class="proto-steps">
+          <div class="proto-step step"><span class="proto-dot"><b>1</b></span><span class="proto-v">Saluda</span></div>
+          <div class="proto-step step"><span class="proto-dot"><b>2</b></span><span class="proto-v">Verifica</span></div>
+          <div class="proto-step step"><span class="proto-dot"><b>3</b></span><span class="proto-v">Soluciona</span></div>
+          <div class="proto-step step alt"><span class="proto-dot"><b>4</b></span><span class="proto-v">Transfiere</span></div>
+          <div class="proto-step step"><span class="proto-dot"><b>5</b></span><span class="proto-v">Cierra</span></div>
+        </div>
+      </div>
+      </div>
+      <p class="proto-note reveal reveal-d3">Nadie suelta una conversación a la mitad.</p>
+    </div>
+  </section>
+
+  <!-- ═══ SLIDE 4 — ECOSISTEMA + CULTURA ═══ -->
+  <section class="slide bg-warm" id="s4eco">
+    <div class="slide-inner">
+      <p class="headline reveal reveal-d1" style="margin:0 auto 6px;">Ninguna pregunta se queda <span class="accent">sin dueño</span>.</p>
+      <div class="s4-grid reveal reveal-d2">
+        <div class="s4-hero">
+          <div class="s4-big">87%</div>
+          <div class="s4-big-txt">se <b class="accent">soluciona</b> en el<br>primer contacto</div>
+          <div class="s4-sec"><b>13%</b> se <b>transfiere</b> al área correcta</div>
+          <div class="eco-badge d3badge">+15<small>ÁREAS</small></div>
+        </div>
+        <div class="d3-stage" id="sankeyStage">
+          <svg id="sankeySvg" role="img" aria-label="Diagrama de flujo: 87% de las conversaciones se soluciona en el primer contacto; 13% se transfiere a especialistas como Caja, Becas y Financiamiento, Escuelas y Servicios Escolares"></svg>
+          <div class="d3-tip" id="sankeyTip" role="status"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SLIDE 5 — HERRAMIENTAS + RED ANÁHUAC ═══ -->
+  <section class="slide bg-amber" id="s5map">
+    <div class="slide-inner">
+      <p class="headline reveal reveal-d1" style="max-width:1500px; margin:0 auto;">Las herramientas solo sostienen<br>lo que la <span class="accent">cultura</span> ya decidió.</p>
+      <div class="d3-stage map-wrap reveal reveal-d2" id="mapStage">
+        <svg id="mapSvg" role="img" aria-label="Mapa de México: GLPI nació en Mérida y se adoptó en 8 sedes"></svg>
+        <div class="map-counter"><b id="mapCount">8</b><span>sedes de la Red<br>adoptaron GLPI</span></div>
+        <ul class="map-fallback" id="mapFallback" hidden></ul>
+      </div>
+      <p class="lead reveal reveal-d3" style="margin-top:8px;">De solución local a la <span class="accent">Red Anáhuac</span>.</p>
+    </div>
+  </section>
+
+  <!-- ═══ SLIDE 6 — PLACEHOLDER VIDEO ═══ -->
+  <section class="slide bg-black">
+    <div class="slide-inner">
+      <p class="video-bridge reveal reveal-d1">Quienes la sostienen, cada día.</p>
+      <!-- ═══════════════════════════════════════════════════════════════ -->
+      <!-- INSERTAR VIDEO AQUÍ: ver guion oficial en fase9b_guion_video_personajes.md -->
+      <!-- Video testimonial · Xóchitl · Freddy · Wendy · 75s · 16:9        -->
+      <!-- Reemplazar este .video-frame por: <video src="../assets-v3/los-sabios.mp4" controls>-->
+      <!-- Al salir: fade a negro + 3-4s de silencio antes de slide 7       -->
+      <!-- ═══════════════════════════════════════════════════════════════ -->
+      <div class="video-frame reveal reveal-d2">
+        <div class="play"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19" fill="var(--accent)" stroke="none"/></svg></div>
+        <div class="ph-title">Video testimonial — Xóchitl · Freddy · Wendy</div>
+        <div class="ph-meta">75 s · 3 personas del equipo real<br>Placeholder — insertar video final aquí<br><span style="color:var(--accent);">fase9b_guion_video_personajes.md</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SLIDE 7 — IMPACTO + se mide en personas ═══ -->
+  <section class="slide bg-amber">
+    <div class="slide-inner">
+      <div class="stat-cascade">
+        <div class="stat-row reveal reveal-d1"><span class="n">8,500</span> alumnos</div>
+        <div class="stat-row reveal reveal-d2"><span class="n">300</span> atenciones al día</div>
+        <div class="stat-row reveal reveal-d3"><span class="n">25</span> personas en primera línea</div>
+        <div class="stat-row reveal reveal-d4"><span class="n">+15</span> áreas · <span class="n">6</span> años sin pausa</div>
+      </div>
+      <div class="s7-turn reveal reveal-d6" style="margin-top:44px;">
+        <p class="a">Pero un ecosistema no se mide en herramientas.</p>
+        <p class="b">Se mide en personas.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SLIDE 8 — PERSONAS (aterriza "se mide en personas") ═══ -->
+  <!-- PLACEHOLDER FOTO EQUIPO REAL: reemplazar el background de .people-stage por la foto grupal
+       real del equipo cuando exista (derivada del video testimonial "Los Sabios"). Mantener el
+       gradient y los overlays de texto. Por ahora usa el espacio real del CAA. -->
+  <section class="slide">
+    <div class="people-stage"></div>
+    <div class="people-overlay"></div>
+    <div class="slide-inner">
+      <div class="people-num reveal reveal-d1">25 personas.</div>
+      <p class="people-sub reveal reveal-d2">La voz que contesta, cada día.</p>
+      <p class="people-sub reveal reveal-d3" style="font-size:54px;font-weight:600;opacity:.92;margin-top:28px;max-width:1500px;margin-left:auto;margin-right:auto;line-height:1.25;">Y detrás de ellas, casi <span class="accent">300</span> personas que alguna vez han tomado una conversación.</p>
+    </div>
+  </section>
+
+  <!-- ═══ SLIDE 9 — VISIÓN DE FUTURO (CLÍMAX, DORADO PLENO) ═══ -->
+  <section class="slide bg-gold-climax">
+    <div class="slide-inner">
+      <p class="kicker reveal reveal-d1" style="color:var(--gold);">Hacia dónde va</p>
+      <h2 class="headline reveal reveal-d1" style="margin-bottom:10px;">Este modelo ya escala.</h2>
+      <div class="future-steps">
+        <div class="future-step reveal reveal-d2"><span class="num">01</span><span class="txt"><b>Ningún área fuera del pacto.</b></span></div>
+        <div class="future-step reveal reveal-d3"><span class="num">02</span><span class="txt"><b>Datos que anticipan la necesidad.</b></span></div>
+        <div class="future-step reveal reveal-d4"><span class="num">03</span><span class="txt"><b>Cada sede, su propia Línea Invisible.</b></span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══ SLIDE 10 — CIERRE ═══ -->
+  <section class="slide" data-bg="cierre">
+    <div class="slide-inner">
+      <p class="closing-line reveal reveal-d1">Hay una línea que conecta a cada persona de esta universidad con alguien dispuesto a responder.</p>
+      <p class="closing-line step" style="margin-top:18px;">No se ve. Está hecha de personas que eligen, cada día…</p>
+      <p class="no-soltar step">…no soltar.</p>
+      <p class="closing-line step" style="margin-top:14px;font-weight:500;">Gracias.</p>
+      <div class="closing-logo-wrap step" style="margin-top:46px;">
+        <div class="cl-title">La Línea <span class="accent">Invisible</span></div>
+        <div class="cl-rule"></div>
+        <div class="cl-sub">Atención en Línea · Anáhuac Mayab · 2020 – 2026</div>
+      </div>
+    </div>
+    <!-- Easter egg: QR al "lado B" (galería Momentos). Discreto, aparece tarde. -->
+    <a class="egg" href="https://tribus.memovaldez.com/momentos/" target="_blank" rel="noopener"
+       aria-label="Easter egg: el lado B de la Línea Invisible">
+      <img class="egg-qr" src="../momentos/qr_momentos.png" alt="Código QR hacia la galería Momentos">
+    </a>
+  </section>
+
+</div>
+
+<!-- CHROME -->
+<div class="hud progress-track"><div class="progress-bar" id="progressBar"></div></div>
+<div class="hud slide-counter" id="slideCounter">1 / 11</div>
+<div class="hud arrows">
+  <button class="arrow-btn" id="arrowPrev" aria-label="Anterior">‹</button>
+  <button class="arrow-btn" id="arrowNext" aria-label="Siguiente">›</button>
+</div>
+<button class="hud fs-btn" id="fsBtn" aria-label="Pantalla completa (F)" title="Pantalla completa (F)">⛶</button>
+</div></div>
+
+<script>
+(function(){
+  const slides = Array.from(document.querySelectorAll('.slide'));
+  const TOTAL = slides.length;
+  let current = 0;
+  let animating = false;
+  const T = 560;
+
+  const counter = document.getElementById('slideCounter');
+  const bar = document.getElementById('progressBar');
+  const aPrev = document.getElementById('arrowPrev');
+  const aNext = document.getElementById('arrowNext');
+  const fsBtn = document.getElementById('fsBtn');
+
+  // lienzo fijo 1920×1080: factor de escala con letterbox
+  const stage = document.getElementById('stage');
+  function fit(){ const sc=Math.min(window.innerWidth/1920, window.innerHeight/1080); stage.style.setProperty('--s', sc); window.__S=sc; }
+  window.addEventListener('resize', fit);
+  document.addEventListener('fullscreenchange', fit);
+  document.addEventListener('webkitfullscreenchange', fit);
+  fit();
+
+  function updateUI(){
+    counter.textContent = (current+1) + ' / ' + TOTAL;
+    bar.style.width = (TOTAL>1 ? (current/(TOTAL-1))*100 : 0) + '%';
+    aPrev.classList.toggle('disabled', current===0);
+    aNext.classList.toggle('disabled', current===TOTAL-1);
+  }
+
+  function goTo(idx){
+    if(animating || idx===current || idx<0 || idx>=TOTAL) return;
+    animating = true;
+    const prev = slides[current];
+    const next = slides[idx];
+    const dir = idx>current ? 1 : -1;
+
+    // reset reveals on the incoming slide
+    next.querySelectorAll('.reveal').forEach(r=>{ r.style.transition='none'; r.style.opacity=''; r.style.transform=''; });
+    void next.offsetWidth;
+    next.querySelectorAll('.reveal').forEach(r=>{ r.style.transition=''; });
+
+    next.classList.remove('prev');
+    next.style.transform = 'translateX(' + (dir*50) + 'px)';
+    void next.offsetWidth;
+
+    prev.classList.remove('active');
+    prev.classList.add('prev');
+    prev.style.transform = 'translateX(' + (-dir*50) + 'px)';
+
+    next.classList.add('active');
+    next.style.transform = '';
+
+    current = idx;
+    updateUI();
+
+    setTimeout(()=>{
+      prev.classList.remove('prev');
+      prev.style.transform='';
+      animating=false;
+      // safety net: guarantee reveals on active slide are visible after their delays
+      setTimeout(()=> {
+        slides[current].querySelectorAll('.reveal').forEach(r=>r.classList.add('force-show'));
+      }, 2900);
+    }, T);
+    // clear force-show from the slide we left so it re-animates next visit
+    prev.querySelectorAll('.reveal').forEach(r=>r.classList.remove('force-show'));
+  }
+
+  function next(){
+    if(!animating){ const s=slides[current].querySelector('.step:not(.on)'); if(s){ s.classList.add('on'); return; } }
+    goTo(current+1);
+  }
+  function prev(){
+    if(!animating){ const on=slides[current].querySelectorAll('.step.on'); if(on.length){ on[on.length-1].classList.remove('on'); return; } }
+    goTo(current-1);
+  }
+  // al salir de un slide, sus pasos se reinician
+  const _goTo=goTo; goTo=function(i){ const from=slides[current]; _goTo(i); if(slides[current]!==from) from.querySelectorAll('.step.on').forEach(s=>s.classList.remove('on')); };
+
+  document.addEventListener('keydown', e=>{
+    if(['ArrowRight','ArrowDown',' ','PageDown','Enter'].includes(e.key)){ e.preventDefault(); next(); }
+    else if(['ArrowLeft','ArrowUp','PageUp','Backspace'].includes(e.key)){ e.preventDefault(); prev(); }
+    else if(e.key==='Home'){ e.preventDefault(); goTo(0); }
+    else if(e.key==='End'){ e.preventDefault(); goTo(TOTAL-1); }
+    else if(e.key==='f'||e.key==='F'){ e.preventDefault(); fsBtn.click(); }
+  });
+
+  aPrev.addEventListener('click', prev);
+  aNext.addEventListener('click', next);
+  document.addEventListener('click', e=>{
+    if(e.target.closest('.arrow-btn') || e.target.closest('.fs-btn')) return;
+    if(e.target.closest('.egg')) return;
+    if(e.clientX > window.innerWidth*0.5) next(); else prev();
+  });
+
+  // touch
+  let tsx=0, tsy=0;
+  document.addEventListener('touchstart', e=>{ tsx=e.changedTouches[0].clientX; tsy=e.changedTouches[0].clientY; }, {passive:true});
+  document.addEventListener('touchend', e=>{
+    const dx=e.changedTouches[0].clientX-tsx, dy=e.changedTouches[0].clientY-tsy;
+    if(Math.abs(dx)>Math.abs(dy) && Math.abs(dx)>50){ dx<0 ? next() : prev(); }
+  }, {passive:true});
+
+  // wheel
+  let wt=null;
+  document.addEventListener('wheel', e=>{
+    if(wt) return;
+    if(Math.abs(e.deltaY)<30) return;
+    e.deltaY>0 ? next() : prev();
+    wt=setTimeout(()=>{wt=null;}, 800);
+  }, {passive:true});
+
+  // fullscreen
+  fsBtn.addEventListener('click', ()=>{
+    const el=document.documentElement;
+    if(!document.fullscreenElement && !document.webkitFullscreenElement){
+      (el.requestFullscreen||el.webkitRequestFullscreen).call(el);
+    } else {
+      (document.exitFullscreen||document.webkitExitFullscreen).call(document);
+    }
+  });
+
+  // init
+  slides[0].classList.add('active');
+  slides[0].querySelectorAll('.reveal').forEach(r=>r.classList.add('force-show'));
+  updateUI();
+})();
+</script>
+<script src="../vendor/d3.min.js"></script>
+<script src="../vendor/d3-sankey.min.js"></script>
+<script src="../vendor/topojson-client.min.js"></script>
+<script src="../vendor/mexico.geo.js"></script>
+<script>
+(function(){
+if(!window.d3) return;
+const RM=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt=d3.format(',');
+const W=()=>1680, H=()=>1080; // lienzo fijo
+['sankeyStage','mapStage'].forEach(id=>{const el=document.getElementById(id);
+  ['click','mousedown','touchstart','touchend','wheel'].forEach(ev=>el.addEventListener(ev,e=>e.stopPropagation(),{passive:true}));});
+function defs(svg,id,dev){const f=svg.append('defs').append('filter').attr('id',id).attr('x','-50%').attr('y','-50%').attr('width','200%').attr('height','200%');
+  f.append('feGaussianBlur').attr('stdDeviation',dev).attr('result','b');const m=f.append('feMerge');m.append('feMergeNode').attr('in','b');m.append('feMergeNode').attr('in','SourceGraphic');}
+/* ---------- SLIDE 4: SANKEY ---------- */
+let skBuilt=false,skSel=null;
+function buildSankey(){
+  const st=document.getElementById('sankeyStage');
+  const w=st.clientWidth||1192,h=640;
+  const svg=d3.select('#sankeySvg').attr('viewBox',`0 0 ${w} ${h}`).attr('height',h);svg.selectAll('*').remove();defs(svg,'glow',3);
+  const TOTAL=143867; // base para % (no se muestra en pantalla)
+  const E0={CAA:73181,'Soporte Técnico':39508};E0['Otras áreas de primera línea']=TOTAL-E0.CAA-E0['Soporte Técnico'];
+  // Escalamientos REALES (19,158 origen→destino)
+  const ESC_REAL=[["CAA", "Caja", 3858], ["CAA", "Otras áreas", 2432], ["CAA", "Servicios Escolares", 1966], ["CAA", "Soporte a alumnos", 1747], ["CAA", "Becas y Financiamiento", 2969], ["CAA", "Escuelas", 2859], ["Soporte Técnico", "Otras áreas", 589], ["CAA", "Certificación y Titulación", 533], ["Soporte Técnico", "Caja", 517], ["Tecnología Educativa", "Soporte a alumnos", 391], ["Soporte Técnico", "Becas y Financiamiento", 249], ["Soporte Técnico", "Escuelas", 539], ["Mantenimiento", "Otras áreas", 148], ["Soporte Técnico", "Servicios Escolares", 105], ["Tecnología Educativa", "Otras áreas", 63], ["Mantenimiento", "Soporte a alumnos", 34], ["Mayabús", "Soporte a alumnos", 29], ["Soporte Técnico", "Soporte a alumnos", 24], ["Mayabús", "Caja", 24], ["Mayabús", "Otras áreas", 21], ["Mayabús", "Becas y Financiamiento", 9], ["Otras áreas ", "Otras áreas", 8], ["Tecnología Educativa", "Caja", 5], ["Tecnología Educativa", "Escuelas", 10], ["Otras áreas ", "Becas y Financiamiento", 5], ["Otras áreas ", "Soporte a alumnos", 3], ["Mayabús", "Servicios Escolares", 3], ["Tecnología Educativa", "Becas y Financiamiento", 5], ["Otras áreas ", "Servicios Escolares", 2], ["Mantenimiento", "Becas y Financiamiento", 2], ["Mantenimiento", "Servicios Escolares", 2], ["Mantenimiento", "Caja", 2], ["Soporte Técnico", "Certificación y Titulación", 2], ["Otras áreas ", "Escuelas", 2], ["Mayabús", "Escuelas", 1]];
+  const SPEC=['Caja','Becas y Financiamiento','Escuelas','Servicios Escolares'],OTR='Otras especialidades';
+  const gO=o=>E0[o]!==undefined?o:'Otras áreas de primera línea',gD=d=>SPEC.includes(d)?d:OTR;
+  const esc={},spec={};Object.keys(E0).forEach(k=>esc[k]=0);
+  ESC_REAL.forEach(([o,d,v])=>{esc[gO(o)]+=v;spec[gD(d)]=(spec[gD(d)]||0)+v;});
+  const R='Soluciona',C='Transfiere';
+  const names=[...Object.keys(E0),R,C,...SPEC,OTR];
+  const ix=n=>names.indexOf(n);const links=[];
+  Object.keys(E0).forEach(k=>{links.push({source:ix(k),target:ix(R),value:E0[k]-esc[k]});links.push({source:ix(k),target:ix(C),value:esc[k]});});
+  [...SPEC,OTR].forEach(k=>links.push({source:ix(C),target:ix(k),value:spec[k]}));
+  const L=330,Rm=320;
+  const sk=d3.sankey().nodeWidth(20).nodePadding(96).nodeAlign(d3.sankeyLeft).nodeSort(null).extent([[L,10],[w-Rm,h-10]]);
+  const g=sk({nodes:names.map(n=>({name:n})),links:links.map(d=>({...d}))});
+  const tip=document.getElementById('sankeyTip');const pct=v=>{const p=v/TOTAL*100;return p<1?'<1%':p.toFixed(0)+'%';};
+  const show=(e,html)=>{tip.innerHTML=html;const S=window.__S||1,r=st.getBoundingClientRect();let x=(e.clientX-r.left)/S+18,y=(e.clientY-r.top)/S-12;const tw=tip.offsetWidth||0;if(x+tw>w)x=Math.max(0,x-tw-36);tip.style.left=x+'px';tip.style.top=y+'px';tip.style.opacity=1;};
+  const hide=()=>tip.style.opacity=0;
+  const col=d=>d.target.name===R?'#F2A94E':'#FF5900';
+  const lk=svg.append('g').selectAll('path').data(g.links).join('path').attr('class','sk-link').attr('d',d3.sankeyLinkHorizontal())
+    .attr('stroke',col).attr('stroke-width',d=>Math.max(1.5,d.width))
+    .on('mousemove',(e,d)=>show(e,`${d.source.name} → ${d.target.name}<br><b>${pct(d.value)}</b> del total`)).on('mouseleave',hide);
+  const pl=svg.append('g').attr('pointer-events','none').selectAll('path').data(g.links.filter(d=>d.width>3)).join('path').attr('class','sk-pulse').attr('d',d3.sankeyLinkHorizontal()).attr('stroke-width',d=>Math.min(3,d.width/3));
+  const nd=svg.append('g').selectAll('g').data(g.nodes).join('g').attr('class',d=>'sk-node'+(d.name===R?' res':'')+(d.depth===1?' mid':''))
+    .on('mousemove',(e,d)=>{lk.classed('hl',l=>l.source===d||l.target===d);show(e,`${d.name}<br><b>${pct(d.value)}</b> del total`);})
+    .on('mouseleave',()=>{lk.classed('hl',false);hide();});
+  nd.append('rect').attr('x',d=>d.x0).attr('y',d=>d.y0).attr('width',d=>d.x1-d.x0).attr('height',d=>Math.max(3,d.y1-d.y0)).attr('rx',3);
+  const lab={'Otras áreas de primera línea':['Otras áreas','de primera línea'],'Becas y Financiamiento':['Becas y','Financiamiento'],'Servicios Escolares':['Servicios','Escolares'],'Otras especialidades':['Otras','especialidades']};
+  const t=nd.append('text').attr('class','sk-lbl')
+    .attr('x',d=>d.depth===0?d.x0-16:d.x1+16).attr('text-anchor',d=>d.depth===0?'end':'start')
+    .attr('y',d=>(d.y0+d.y1)/2);
+  t.each(function(d){const el=d3.select(this);const ls=lab[d.name]||[d.name];
+    const extra=d.depth===1?[pct(d.value)]:[];const all=[...ls,...extra];const off=-(all.length-1)*0.56;
+    all.forEach((s,i)=>el.append('tspan').attr('x',el.attr('x')).attr('dy',(i===0?off+0.35:1.1)+'em').attr('class',i>=ls.length?'v':null).text(s));});
+  skSel={lk,pl,nd};skBuilt=true;
+}
+function playSankey(){
+  if(!skBuilt) buildSankey(); const {lk,pl,nd}=skSel;
+  if(RM){lk.attr('opacity',1);nd.attr('opacity',1);return;}
+  nd.interrupt().attr('opacity',0).transition().delay(d=>200+d.depth*450).duration(500).attr('opacity',1);
+  lk.each(function(){const L=this.getTotalLength();d3.select(this).interrupt().attr('stroke-dasharray',L+' '+L).attr('stroke-dashoffset',L);})
+    .transition().delay(d=>350+d.source.depth*450).duration(900).ease(d3.easeCubicOut).attr('stroke-dashoffset',0).on('end',function(){d3.select(this).attr('stroke-dasharray',null);});
+  pl.interrupt().attr('opacity',0).transition().delay(1800).duration(600).attr('opacity',1);
+}
+/* ---------- SLIDE 5: MAPA ---------- */
+const MER={n:'Mérida',lat:20.97,lon:-89.62};
+// offsets en px de lienzo (etiquetas 40px); lx/ly = extremo de la leader line
+const SEDES=[{n:'Cancún',lat:21.16,lon:-86.85,dx:20,dy:14,a:'start'},{n:'Oaxaca',lat:17.07,lon:-96.72,dx:0,dy:58,a:'middle'},
+ {n:'Xalapa',lat:19.54,lon:-96.91,dx:-6,dy:-96,a:'middle',lead:1,lx:-4,ly:-86},{n:'Querétaro',lat:20.59,lon:-100.39,dx:-20,dy:-22,a:'end'},
+ {n:'Puebla',lat:19.04,lon:-98.21,dx:-56,dy:122,a:'end',lead:1,lx:-50,ly:88},{n:'Córdoba',lat:18.88,lon:-96.93,dx:84,dy:74,lead:1,lx:80,ly:62},
+ {n:'Anáhuac Norte',lat:19.40,lon:-99.27,dx:-90,dy:12,a:'end',lead:1,lx:-84,ly:0},{n:'SERUA (CDMX)',lat:19.43,lon:-99.13,dx:-90,dy:74,a:'end',lead:1,lx:-84,ly:60}];
+let mpBuilt=false,mpSel=null,mpFail=false;
+function fallback(){mpFail=true;document.getElementById('mapSvg').style.display='none';const ul=document.getElementById('mapFallback');ul.hidden=false;
+  ul.innerHTML='<li><b style="color:#FF5900">Mérida — nació aquí (LeonEl · GLPI)</b></li>'+SEDES.map(s=>`<li>${s.n}</li>`).join('');document.getElementById('mapCount').textContent=SEDES.length;}
+let mxGeo=null;
+const geoP=(window.MX_GEO?Promise.resolve(window.MX_GEO):Promise.reject(new Error('sin geo local')))
+  .then(f=>{mxGeo=f;return f;});
+geoP.catch(()=>{});
+function buildMap(geo){
+  const w=W(),h=600;
+  const svg=d3.select('#mapSvg').attr('viewBox',`0 0 ${w} ${h}`).attr('height',h);svg.selectAll('*').remove();
+  defs(svg,'glow2',4);
+  const gr=svg.select('defs').append('linearGradient').attr('id','arcGrad');gr.append('stop').attr('offset','0').attr('stop-color','#FF5900');gr.append('stop').attr('offset','1').attr('stop-color','#F2A94E');
+  const proj=d3.geoMercator().fitExtent([[520,10],[1340,h-10]],geo);const path=d3.geoPath(proj);
+  svg.append('path').datum(geo).attr('class','mx-land').attr('d',path);
+  const [mx,my]=proj([MER.lon,MER.lat]);
+  const arcs=svg.append('g'),pul=svg.append('g'),cities=svg.append('g'),labels=svg.append('g');
+  const arcD=s=>{const [x,y]=proj([s.lon,s.lat]);const dx=x-mx,dy=y-my,dist=Math.hypot(dx,dy);const cx=(mx+x)/2+dy*0.18-0,cy=(my+y)/2-dist*0.35;return `M${mx},${my} Q${cx},${cy} ${x},${y}`;};
+  const A=arcs.selectAll('path').data(SEDES).join('path').attr('class','mx-arc').attr('d',arcD);
+  const P=pul.selectAll('path').data(SEDES).join('path').attr('class','mx-arc-pulse').attr('d',arcD);
+  const Cg=cities.selectAll('g').data(SEDES).join('g').attr('transform',s=>`translate(${proj([s.lon,s.lat])})`);
+  Cg.append('circle').attr('class','mx-city').attr('r',9);
+  const Lg=labels.selectAll('g').data(SEDES).join('g').attr('transform',s=>`translate(${proj([s.lon,s.lat])})`);
+  Lg.filter(s=>s.lead).append('line').attr('class','mx-lead').attr('x1',0).attr('y1',0).attr('x2',s=>s.lx).attr('y2',s=>s.ly);
+  Lg.append('text').attr('class','mx-lbl').attr('x',s=>s.dx).attr('y',s=>s.dy).attr('text-anchor',s=>s.a||'start').text(s=>s.n);
+  svg.append('circle').attr('class','mx-ring').attr('cx',mx).attr('cy',my).attr('r',13);
+  svg.append('circle').attr('class','mx-merida').attr('cx',mx).attr('cy',my).attr('r',14);
+  svg.append('text').attr('class','mx-lbl').attr('x',mx+10).attr('y',my+66).attr('text-anchor','middle').style('font-size','48px').text('Mérida');
+  // tarjetas: columna compacta a la derecha, arriba (lejos de la etiqueta de Cancún)
+  const CW=500,CH=100,GAP=14,cx0=w-CW-2,cy0=2,cards=svg.append('g').attr('class','mx-cards');
+  const C=[{n:'Rocket.Chat',tag:'LOCAL',ic:'chat'},{n:'LeonEl',tag:'LOCAL',ic:'bot'},{n:'GLPI',tag:'ESCALÓ A LA RED',ic:'doc',hi:1}];
+  const cg=cards.selectAll('g.mx-card').data(C).join('g').attr('class',c=>'mx-card'+(c.hi?' hi':'')).attr('transform',(c,i)=>`translate(${cx0},${cy0+i*(CH+GAP)})`);
+  cg.append('rect').attr('width',CW).attr('height',CH).attr('rx',10);
+  cg.each(function(c){const g=d3.select(this).append('g').attr('transform','translate(20,24) scale(2.2)');
+    if(c.ic==='chat'){g.append('path').attr('d','M4 5h16v11H9l-5 4z');g.append('line').attr('x1',8).attr('y1',10).attr('x2',16).attr('y2',10);}
+    else if(c.ic==='bot'){g.append('path').attr('d','M4 7h16v12H4z');g.append('line').attr('x1',12).attr('y1',3).attr('x2',12).attr('y2',7);g.append('circle').attr('class','i').attr('cx',9).attr('cy',13).attr('r',1.3);g.append('circle').attr('class','i').attr('cx',15).attr('cy',13).attr('r',1.3);}
+    else{g.append('path').attr('d','M5 4h10l4 4v12H5z M14 4v5h5');g.append('line').attr('x1',8).attr('y1',13).attr('x2',16).attr('y2',13);g.append('line').attr('x1',8).attr('y1',16).attr('x2',14).attr('y2',16);}});
+  cg.append('text').attr('class','n').attr('x',94).attr('y',46).text(c=>c.n);
+  cg.append('text').attr('class','tg').attr('x',94).attr('y',86).text(c=>c.tag);
+  mpSel={A,P,Cg,Lg,cards};mpBuilt=true;
+}
+function playMap(){
+  const cnt=document.getElementById('mapCount');
+  if(mpFail){cnt.textContent='8';return;}
+  geoP.then(geo=>{
+    if(!mpBuilt) buildMap(geo); const {A,P,Cg,Lg,cards}=mpSel;
+    if(RM){cnt.textContent='8';cards.attr('opacity',1);return;}
+    const D=900,step=520,END=D+(SEDES.length-1)*step+800;
+    cards.interrupt().attr('opacity',0).transition().delay(END+300).duration(600).attr('opacity',1);
+    A.each(function(){const L=this.getTotalLength();d3.select(this).interrupt().attr('stroke-dasharray',L+' '+L).attr('stroke-dashoffset',L);})
+     .transition().delay((d,i)=>D+i*step).duration(800).ease(d3.easeCubicInOut).attr('stroke-dashoffset',0);
+    P.interrupt().attr('opacity',0).transition().delay((d,i)=>D+i*step+800).attr('opacity',.8);
+    Cg.interrupt().attr('opacity',0).transition().delay((d,i)=>D+i*step+700).duration(300).attr('opacity',1);
+    Lg.interrupt().attr('opacity',0).transition().delay((d,i)=>D+i*step+750).duration(300).attr('opacity',1);
+    cnt.textContent='0';SEDES.forEach((s,i)=>setTimeout(()=>{cnt.textContent=(i===SEDES.length-1||document.getElementById('s5map').classList.contains('active'))?String(i+1):'8';},D+i*step+800));
+    setTimeout(()=>{cnt.textContent='8';},END+50);
+  }).catch(()=>{fallback();cnt.textContent='8';});
+}
+/* activación por slide */
+const hooks=[[document.getElementById('s4eco'),playSankey],[document.getElementById('s5map'),playMap]];
+hooks.forEach(([el,fn])=>{let was=false;new MutationObserver(()=>{const now=el.classList.contains('active');if(now&&!was)fn();was=now;}).observe(el,{attributes:true,attributeFilter:['class']});});
+// lienzo fijo: sin redibujado en resize (solo cambia --s)
+})();
+</script>
+</body>
+</html>
