@@ -453,6 +453,16 @@ img, svg { max-width:100%; height:auto; }
 .proto-main{position:relative;}
 .proto-ch .proto-track{left:0;right:140px;}
 @media (prefers-reduced-motion:reduce){.ch,.ch-flow{transition:none;}}
+
+/* ═══ Slide 12 accidental ═══ */
+#sOops .oops{position:absolute;inset:0;display:grid;grid-template-columns:1fr 640px;gap:96px;align-items:center;padding:96px 120px;}
+#sOops .oops-img{height:888px;display:flex;align-items:center;justify-content:center;transform:rotate(-2.5deg);}
+#sOops .oops-img img{max-height:100%;max-width:100%;border-radius:22px;box-shadow:0 24px 80px rgba(0,0,0,.7);}
+#sOops .oops-k{font-size:96px;font-weight:800;letter-spacing:-.02em;color:#F3F3F1;line-height:1;}
+#sOops .oops-t{margin-top:28px;font-size:50px;line-height:1.25;color:#D8D5CF;}
+#sOops .oops-qr{display:block;width:380px;height:380px;margin-top:48px;padding:18px;background:#fff;border-radius:22px;box-shadow:0 0 0 8px rgba(255,89,0,.35),0 0 60px rgba(255,89,0,.35);}
+#sOops .oops-qr img{width:100%;height:100%;image-rendering:pixelated;display:block;}
+#sOops .oops-c{margin-top:22px;font-size:43px;font-weight:600;color:var(--accent);}
 </style>
 </head>
 <body>
@@ -635,18 +645,29 @@ img, svg { max-width:100%; height:auto; }
         <div class="cl-sub">Atención en Línea · Anáhuac Mayab · 2020 – 2026</div>
       </div>
     </div>
-    <!-- Easter egg: QR al "lado B" (galería Momentos). Discreto, aparece tarde. -->
-    <a class="egg" href="https://tribus.memovaldez.com/momentos/" target="_blank" rel="noopener"
-       aria-label="Easter egg: el lado B de la Línea Invisible">
-      <img class="egg-qr" src="../momentos/qr_momentos.png" alt="Código QR hacia la galería Momentos">
-    </a>
   </section>
+
+  <!-- ═══ SLIDE 12 — "ACCIDENTAL" (lado B + QR para Q&A) ═══ -->
+  <section class="slide bg-black" id="sOops">
+    <div class="oops">
+      <div class="oops-img"><img src="../momentos/img/momento_19.jpeg" alt="Sticker de un bebé de cabeza enviado en un chat de atención"></div>
+      <div class="oops-side">
+        <p class="oops-k">Ups… ese no era.</p>
+        <p class="oops-t">Bueno, ya que lo vieron:<br><span class="accent">así se siente a veces el semestre.</span></p>
+        <a class="oops-qr" href="https://tribus.memovaldez.com/momentos/" target="_blank" rel="noopener" aria-label="Galería: el lado B de la Línea Invisible">
+          <img src="../momentos/qr_momentos.png" alt="Código QR hacia la galería Momentos">
+        </a>
+        <p class="oops-c">El lado B de la Línea Invisible 👀</p>
+      </div>
+    </div>
+  </section>
+
 
 </div>
 
 <!-- CHROME -->
 <div class="hud progress-track"><div class="progress-bar" id="progressBar"></div></div>
-<div class="hud slide-counter" id="slideCounter">1 / 11</div>
+<div class="hud slide-counter" id="slideCounter">1 / 12</div>
 <div class="hud arrows">
   <button class="arrow-btn" id="arrowPrev" aria-label="Anterior">‹</button>
   <button class="arrow-btn" id="arrowNext" aria-label="Siguiente">›</button>
@@ -745,7 +766,7 @@ img, svg { max-width:100%; height:auto; }
   aNext.addEventListener('click', next);
   document.addEventListener('click', e=>{
     if(e.target.closest('.arrow-btn') || e.target.closest('.fs-btn')) return;
-    if(e.target.closest('.egg')) return;
+    if(e.target.closest('.egg')||e.target.closest('.oops-qr')) return;
     if(e.clientX > window.innerWidth*0.5) next(); else prev();
   });
 
