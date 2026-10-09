@@ -5,3 +5,6 @@ Thumbs.db
 # Editor
 .vscode/
 .idea/
+
+# Video HD (>100 MB, no cabe en GitHub)
+video_pendiente/

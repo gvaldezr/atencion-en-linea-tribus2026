@@ -1,8 +1,8 @@
 # Fase 14 — GUION v4 — "La Línea Invisible"
 **Equipo T·06 · Semana de Innovación · Anáhuac Mayab · lunes 12 oct 2026 · Límite estricto 5:00**
-Base: `fase10_guion_v3_completo.md` (intacto) + análisis fase 13. Video: `fase9b` editado a 75 s.
+Base: `fase10_guion_v3_completo.md` (intacto) + análisis fase 13. Video: `personas.mp4`, 82 s.
 
-> **Estructura:** Karla (Arquitecta / Heraldo) → Video 75 s → Silencio 3 s → Memo (Significador / Mentor) → «…no soltar».
+> **Estructura:** Karla (Arquitecta / Heraldo) → Video 82 s → Silencio 3 s → Memo (Significador / Mentor) → «…no soltar».
 > **Héroe:** la primera línea (25 personas + casi 300). **Beneficiario:** el alumno. **Idea controladora (McKee):** *Ninguna pregunta se queda sin dueño.*
 > **Semilla → cosecha (Chekhov):** Karla dice «no lo suelta» (≈1:18) → Memo cierra «no soltar» (≈4:37).
 > **Tono:** usted / formal. Cero tuteos.
@@ -31,19 +31,19 @@ Base: `fase10_guion_v3_completo.md` (intacto) + análisis fase 13. Video: `fase9
 
 **[1:11] [▶ S5 · Diagrama 87%]** *[Diagrama de escalamiento. Énfasis en **no lo suelta** — es la semilla del cierre. «Soluciona» y «Transfiere» del diagrama retoman los verbos del protocolo.]*
 
-**KARLA:** Es un acuerdo que nadie firmó y todos cumplen: ninguna pregunta se queda sin dueño. Quien toma un mensaje no lo suelta hasta que el alumno tiene su respuesta. Más de quince áreas, una sola línea.
+**KARLA:** Es un pacto que nadie firmó y todos cumplen: ninguna pregunta se queda sin dueño. Quien toma un mensaje no lo suelta hasta que el alumno tiene su respuesta. Más de quince áreas, una sola línea.
 
 **[1:31] [▶ S6]** *[Mapa 8 sedes GLPI. Tono factual, sin presumir.]*
 
-**KARLA:** La tecnología lo habilita. Fuimos pioneros en la educación superior en México en conectar WhatsApp Business a un sistema omnicanal profesional. LeonEl y Rocket.Chat son desarrollo propio. Y nuestra implementación de GLPI ya la adoptaron ocho sedes de la Red.
+**KARLA:** Las herramientas solo sostienen lo que la cultura ya decidió. Fuimos pioneros en la educación superior en México en conectar WhatsApp Business a un sistema omnicanal profesional. Y nuestra implementación de GLPI ya la adoptaron ocho sedes de la Red.
 
 **[1:51] [▶ S7]** *[Karla gira a la pantalla, paso atrás. Fade a negro → video.]*
 
-**KARLA:** Pero esto se entiende mejor con quienes lo sostienen.
+**KARLA:** Pero el pacto se entiende mejor con quienes lo cumplen.
 
 ---
 
-## VIDEO — [▶ S7] [1:58 – 3:13] · 75 s editado
+## VIDEO — [▶ S7] [≈2:03 – 3:25] · 82 s (archivo real personas.mp4)
 Xóchitl → Freddy → Wendy (texto oficial en `fase9b_guion_video_personajes.md`, sin cambios). Cierre de Wendy: *«Para él… es casi magia. […] De que funcione… sin que tenga que saber cómo.»* Fade a negro.
 
 **[3:13 – 3:16]** Pantalla negra. **Silencio 3 s.** Luces suben. Memo en posición.
@@ -66,7 +66,7 @@ Xóchitl → Freddy → Wendy (texto oficial en `fase9b_guion_video_personajes.m
 
 **[4:00] [▶ S10]** *[Visión 3 pasos. Energía hacia adelante.]*
 
-**MEMO:** Y este modelo ya escala. El siguiente paso es llevar a las sedes no solo el software, sino el modelo completo: el pacto. Que ningún área quede fuera. Que nuestros datos anticipen la necesidad. Y que cada sede tenga su propia Línea Invisible.
+**MEMO:** Y este modelo ya escala. El siguiente paso es llevar a las sedes no solo el software, sino la cultura: el pacto. Que ningún área quede fuera. Que nuestros datos anticipen la necesidad. Y que cada sede tenga su propia Línea Invisible.
 
 **[4:21] [▶ S11]** *[Campus nocturno, «A» iluminada. Lento. 4 clics: «No se ve…» · «no soltar» (3 s antes) · «Gracias» · nombre final.]*
 
@@ -74,6 +74,11 @@ Xóchitl → Freddy → Wendy (texto oficial en `fase9b_guion_video_personajes.m
 
 ---
 
+
+> **Actualizado 9 oct:** el video final (`personas.mp4`) dura **82 s**, no 75. Todo lo posterior al video se recorre ~7 s: Memo arranca ≈3:28 y termina ≈4:51. Colchón ≈9 s. **No agregar texto.** Si en el ensayo pasan de 5:00, recortar primero pausas, no contenido.
+
+
+> **Actualizado 9 oct (pacto y cultura):** «acuerdo» → «pacto» (S5); «La tecnología lo habilita» → «Las herramientas solo sostienen lo que la cultura ya decidió» y se quitó «LeonEl y Rocket.Chat son desarrollo propio» (S6); puente al video «el pacto… quienes lo cumplen» (S7); «el modelo completo» → «la cultura» (S10). «Pacto» suena 3 veces antes del cierre. Delta neto ≈0 palabras: total sigue ≈4:51.
 # TABLA DE TIEMPOS (verificable)
 Método: palabras habladas (sin acotaciones; «…» no cuenta) ÷ 130 ppm × 60 + pausas escritas. Números dichos se cuentan como se pronuncian (ej. «ciento cuarenta y tres mil ochocientas sesenta y siete» = 8 palabras).
 
@@ -88,7 +93,7 @@ Método: palabras habladas (sin acotaciones; «…» no cuenta) ÷ 130 ppm × 60
 | K6 | KARLA | S7 | 9 | 4.2 | 1 | 1:51 | 1:56 |
 | **Subtotal Karla** | | | **230** | 106.1 | 11 | 0:00 | **≈2:01** |
 | Transición | — | S7 | — | — | 2 | 1:56 | 1:58 |
-| **Video** | Xóchitl·Freddy·Wendy | S7 | — | — | 75 | 1:58 | 3:13 |
+| **Video** | Xóchitl·Freddy·Wendy | S7 | — | — | 82 | 1:58 | 3:13 |
 | Silencio | — | S7 | — | — | 3 | 3:13 | 3:16 |
 | M1 | MEMO | S8 | 43 | 19.8 | 2 | 3:16 | 3:38 |
 | M2 | MEMO | S8 | 10 | 4.6 | 2 | 3:38 | 3:44 |
@@ -96,7 +101,7 @@ Método: palabras habladas (sin acotaciones; «…» no cuenta) ÷ 130 ppm × 60
 | M4 | MEMO | S10 | 43 | 19.8 | 1 | 4:00 | 4:21 |
 | M5 | MEMO | S11 | 30 | 13.8 | 4 | 4:21 | 4:39 |
 | **Subtotal Memo** | | | **158** | 72.9 | 10 | 3:16 | **4:39** (1:23) |
-| **TOTAL** | | | **388 palabras** | 179.0 | 101 | | **≈4:44** → colchón **≈0:16** antes de 5:00 (tiempos posteriores a S4 se recorren ~5 s) |
+| **TOTAL** | | | **388 palabras** | 179.0 | 108 | | **≈4:51** → colchón **≈0:09** antes de 5:00 (video real `personas.mp4` = 82 s) |
 
 > **Actualizado 7 oct (slide del protocolo):** Karla queda en 1:56 y Memo en 1:23. Se quitó «Si no le corresponde, lo escala al área correcta» del bloque del diagrama porque ya lo dice el protocolo. El colchón de 21 s absorbe nervios, ritmo lento en escenario, aplausos y arranque del video. **No lo llenen con texto.**
 
@@ -107,9 +112,9 @@ Método: palabras habladas (sin acotaciones; «…» no cuenta) ÷ 130 ppm × 60
 | S2 | 300/día + «Esto es la Línea Invisible» | «**Trescientas** atenciones…» |
 | S3 | Origen 2020→hoy | «**Nació** en dos mil veinte…» |
 | S4 | **Protocolo** (5 pasos, un clic por verbo) | «**¿Cómo?** Cada conversación…» |
-| S5 | Diagrama escalamiento 87% | «**Es un acuerdo** que nadie firmó…» |
-| S6 | Mapa 8 sedes GLPI | «**La tecnología** lo habilita…» |
-| S7 | Video | «…quienes lo sostienen.» → play |
+| S5 | Diagrama escalamiento 87% | «**Es un pacto** que nadie firmó…» |
+| S6 | Mapa 8 sedes GLPI | «**Las herramientas** solo sostienen…» |
+| S7 | Video | «…quienes lo cumplen.» → play |
 | S8 | Datos «se mide en personas» | «**Desde julio**…» (permanece en M2) |
 | S9 | Personas 25 / casi 300 | «**Veinticinco** en primera línea…» |
 | S10 | Visión 3 pasos | «**Y este modelo** ya escala…» |
