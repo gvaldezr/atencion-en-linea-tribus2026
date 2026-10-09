@@ -463,6 +463,12 @@ img, svg { max-width:100%; height:auto; }
 #sOops .oops-qr{display:block;width:380px;height:380px;margin-top:48px;padding:18px;background:#fff;border-radius:22px;box-shadow:0 0 0 8px rgba(255,89,0,.35),0 0 60px rgba(255,89,0,.35);}
 #sOops .oops-qr img{width:100%;height:100%;image-rendering:pixelated;display:block;}
 #sOops .oops-c{margin-top:22px;font-size:43px;font-weight:600;color:var(--accent);}
+
+/* ═══ Video real ═══ */
+.video-frame.has-video{border:none;background:#000;overflow:hidden;width:1600px;}
+.video-frame.has-video video{width:100%;height:100%;object-fit:contain;display:block;transition:opacity 1.2s ease;}
+#sVideo.playing .video-bridge{opacity:0 !important;transition:opacity .6s ease;}
+#sVideo.ended video{opacity:0;}
 </style>
 </head>
 <body>
@@ -572,19 +578,11 @@ img, svg { max-width:100%; height:auto; }
   </section>
 
   <!-- ═══ SLIDE 6 — PLACEHOLDER VIDEO ═══ -->
-  <section class="slide bg-black">
+  <section class="slide bg-black" id="sVideo">
     <div class="slide-inner">
       <p class="video-bridge reveal reveal-d1">Quienes la sostienen, cada día.</p>
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <!-- INSERTAR VIDEO AQUÍ: ver guion oficial en fase9b_guion_video_personajes.md -->
-      <!-- Video testimonial · Xóchitl · Freddy · Wendy · 75s · 16:9        -->
-      <!-- Reemplazar este .video-frame por: <video src="../assets-v3/los-sabios.mp4" controls>-->
-      <!-- Al salir: fade a negro + 3-4s de silencio antes de slide 7       -->
-      <!-- ═══════════════════════════════════════════════════════════════ -->
-      <div class="video-frame reveal reveal-d2">
-        <div class="play"><svg viewBox="0 0 24 24"><polygon points="8,5 19,12 8,19" fill="var(--accent)" stroke="none"/></svg></div>
-        <div class="ph-title">Video testimonial — Xóchitl · Freddy · Wendy</div>
-        <div class="ph-meta">75 s · 3 personas del equipo real<br>Placeholder — insertar video final aquí<br><span style="color:var(--accent);">fase9b_guion_video_personajes.md</span></div>
+      <div class="video-frame has-video reveal reveal-d2" id="vidFrame">
+        <video id="vidPersonas" src="../assets-v3/personas.mp4" preload="auto" playsinline></video>
       </div>
     </div>
   </section>
@@ -936,6 +934,25 @@ function playMap(){
 const hooks=[[document.getElementById('s4eco'),playSankey],[document.getElementById('s5map'),playMap]];
 hooks.forEach(([el,fn])=>{let was=false;new MutationObserver(()=>{const now=el.classList.contains('active');if(now&&!was)fn();was=now;}).observe(el,{attributes:true,attributeFilter:['class']});});
 // lienzo fijo: sin redibujado en resize (solo cambia --s)
+})();
+</script>
+
+<script>
+(function(){
+  const s=document.getElementById('sVideo'),v=document.getElementById('vidPersonas');
+  if(!s||!v) return;
+  let was=false;
+  new MutationObserver(()=>{
+    const now=s.classList.contains('active');
+    if(now&&!was){ s.classList.remove('ended'); v.currentTime=0; setTimeout(()=>{ if(s.classList.contains('active')){ const pr=v.play(); if(pr) pr.catch(()=>{}); s.classList.add('playing'); } },900); }
+    if(!now&&was){ v.pause(); s.classList.remove('playing','ended'); }
+    was=now;
+  }).observe(s,{attributes:true,attributeFilter:['class']});
+  v.addEventListener('ended',()=>{ s.classList.add('ended'); });
+  // clic sobre el video: pausa/reanuda (no avanza slide)
+  v.addEventListener('click',e=>{ e.stopPropagation(); v.paused?v.play():v.pause(); });
+  // tecla P: pausa/reanuda desde el control
+  document.addEventListener('keydown',e=>{ if(s.classList.contains('active')&&(e.key==='p'||e.key==='P')){ v.paused?v.play():v.pause(); } });
 })();
 </script>
 </body>
